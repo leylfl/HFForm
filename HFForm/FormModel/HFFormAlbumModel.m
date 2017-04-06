@@ -19,6 +19,13 @@
 
 @implementation HFFormAlbumModel
 
+- (NSMutableArray *)photos {
+    if (!_photos) {
+        _photos = [NSMutableArray array];
+    }
+    return _photos;
+}
+
 - (NSString *)postDataFormat
 {
     NSMutableString *postString = [NSMutableString string];

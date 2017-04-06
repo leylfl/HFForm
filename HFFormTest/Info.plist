@@ -32,5 +32,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>请点“好”允许访问</string>
+	<key>NSCameraUsageDescription</key>
+	<string>请点“好”允许访问</string>
 </dict>
 </plist>

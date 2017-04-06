@@ -13,6 +13,7 @@
 
 #import "HFFormAlbumModel.h"
 
+#import "HFFormImageBrowserVC.h"
 
 #define kCount 3
 #define kPicWidth  105
@@ -28,7 +29,8 @@
     UICollectionViewDelegateFlowLayout,
     UIImagePickerControllerDelegate,
     UINavigationControllerDelegate,
-    HFFormAlbumCollectionViewCellDelegate
+    HFFormAlbumCollectionViewCellDelegate,
+    HFFormImageBrowserDelegate
 >
 
 @property (nonatomic, strong) UICollectionView *collectionView;
@@ -49,6 +51,10 @@
 
 @implementation HFFormAlbumTVC
 
+- (UIViewController *)rootController {
+    return [UIApplication sharedApplication].keyWindow.rootViewController;
+}
+
 #pragma mark - Initialize
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
@@ -56,7 +62,7 @@
         self.titleLabel.font = [UIFont systemFontOfSize:14];
         self.titleLabel.textColor = UIColorFromRGB(0x222222);
         [self.contentView addSubview:self.titleLabel];
-        
+    
         self.subLabel = [[UILabel alloc] init];
         self.subLabel.font = [UIFont systemFontOfSize:12];
         self.subLabel.textColor = UIColorFromRGB(0x878787);
@@ -172,56 +178,20 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [self _updateData];
 }
 
-#pragma mark - TZImagePickerControllerDelegate
-//- (void)imagePickerController:(TZImagePickerController *)picker didFinishPickingPhotos:(NSArray<PAHousePhoto *> *)photos sourceAssets:(NSArray *)assets isSelectOriginalPhoto:(BOOL)isSelectOriginalPhoto infos:(NSArray<NSDictionary *> *)infos {
-//    if (!photos || photos.count == 0) {
-//        return;
-//    }
-//    
-//    NSMutableArray *tmpImgArray = [NSMutableArray arrayWithArray:photos];
-//    NSMutableArray *selectedURLs = [NSMutableArray arrayWithArray:infos];
-//    
-//    // 判断是否有相同的选中
-//    if (self.photoAlbum.photos.count > 0) {
-//        NSUInteger count = 0;
-//        for (NSInteger index = 0; index < selectedURLs.count; index++) {
-//            NSDictionary *dict = selectedURLs[index];
-//            NSURL *tmpURL = dict[@"PHImageFileURLKey"];
-//            
-//            NSString *tmpString = tmpURL.stringValue;
-//            for (PAHousePhoto *photo in self.photoAlbum.photos) {
-//                if ([tmpString isEqualToString:photo.selectedMarkInfo]) {
-//                    count++;
-//                    [selectedURLs removeObjectAtIndex:index];
-//                    [tmpImgArray removeObjectAtIndex:index];
-//                    index = -1;
-//                    break;
-//                }
-//            }
-//        }
-//        
-//        photos = tmpImgArray;
-//        if (count >= 1) {
-//            [[PAAlertView alertWithMessage:@"您添加了重复图片，重复图片已经被过滤" andCompleteBlock:nil] show];
-//        }
-//        count = 0;
-//    }
-//    
-//    if (photos.count > 0 && self.fromType == HFFormAlbumComeTypeOldHousePublish) {
-//        [PAUploadingAlert defaultUpLoadingAlert].totalCount =  photos.count;
-//        [[PAUploadingAlert defaultUpLoadingAlert] showPhotosLoadProgress];
-//    }
-//    for (NSInteger index = 0; index < photos.count; index++) {
-//        PAHousePhoto *newHousePhoto = photos[index];
-//        newHousePhoto.applyFormatRule = self.applyFormatRule;
-//        newHousePhoto.isSecret = self.isSecret;
-//        newHousePhoto.isOldHouse = self.fromType == HFFormAlbumComeTypeOldHousePublish;
-//        
-//        [self.photoAlbum.photos addObject:newHousePhoto];
-//    }
-//    
-//    [self _updateData];
-//}
+#pragma mark - HFFormImageBrowserDelegate
+- (NSInteger)numberOfImagesAtImageBrowser:(HFFormImageBrowserVC *)imageBrowser {
+    return self.photoAlbum.photos.count;
+}
+
+- (__kindof HFFormImageBrowserModel *)imageBrowser:(HFFormImageBrowserVC *)imageBrowser itemAtIndex:(NSUInteger)index {
+    HFFormAlbumPhotoModel *photo = self.photoAlbum.photos[index];
+    
+    HFFormImageBrowserModel *image = [[HFFormImageBrowserModel alloc] init];
+    image.image = photo.originalImage;
+    image.imageURL = photo.imageURL;
+    
+    return image;
+}
 
 #pragma mark - HFFormAlbumCollectionViewCellDelegate
 - (void)deletePhotoOfCell:(HFFormAlbumCollectionViewCell *)cell {
@@ -264,115 +234,73 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 - (void)_openPhotoLibrary {
     BOOL photoLibraryAvailable = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
     BOOL cameraAvailable = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
-//    if (!photoLibraryAvailable && !cameraAvailable && !self.needHouseLayout) {
-//        [PANoticeUtil showNotice:self.hidePhotoLibrary ? @"无法读取您的相机" : @"无法读取您的相机和相册"];
-//        return;
-//    }
-//    
-//    if (self.needHouseLayout && cameraAvailable && photoLibraryAvailable) {
-//        [[PAChoosePhotoActionView actionViewWithType:self.albumActionType buttons:@[@"从小区已有户型图中选择", @"拍照", @"从手机相册选择"] clickBlock:^(NSUInteger tag) {
-//            if (tag == 0) {
-//                [self _presentHouseLayoutController];
-//            }else if (tag == 1) {
-//                [self _presentCameraController];
-//            }else if (tag == 2) {
-//                [self _presentPhotoLibraryController];
-//                
-//            }
-//            
-//        }] show];
-//    }else if (self.needHouseLayout && cameraAvailable){
-//        [[PAChoosePhotoActionView actionViewWithType:self.albumActionType buttons:@[@"从小区已有户型图中选择", @"拍照"] clickBlock:^(NSUInteger tag) {
-//            if (tag == 0) {
-//                [self _presentHouseLayoutController];
-//            }else if (tag == 1) {
-//                [self _presentCameraController];
-//            }
-//        }] show];
-//    }else if (self.needHouseLayout && photoLibraryAvailable){
-//        [[PAChoosePhotoActionView actionViewWithType:self.albumActionType buttons:@[@"从小区已有户型图中选择",  @"从手机相册选择"] clickBlock:^(NSUInteger tag) {
-//            if (tag == 0) {
-//                [self _presentHouseLayoutController];
-//            }else if (tag == 1) {
-//                [self _presentPhotoLibraryController];
-//            }
-//            
-//        }] show];
-//    }else if (cameraAvailable && photoLibraryAvailable){
-//        [[PAChoosePhotoActionView actionViewWithType:self.albumActionType buttons:@[@"拍照", @"从手机相册选择"] clickBlock:^(NSUInteger tag) {
-//            if (tag == 0) {
-//                [self _presentCameraController];
-//            }else if (tag == 1) {
-//                [self _presentPhotoLibraryController];
-//            }
-//        }] show];
-//    }else if (self.needHouseLayout){
-//        [[PAChoosePhotoActionView actionViewWithType:self.albumActionType buttons:@[@"从小区已有户型图中选择"] clickBlock:^(NSUInteger tag) {
-//            if (tag == 0) {
-//                [self _presentHouseLayoutController];
-//            }
-//        }] show];
-//    }else if (cameraAvailable){
-//        [[PAChoosePhotoActionView actionViewWithType:self.albumActionType buttons:@[@"拍照"] clickBlock:^(NSUInteger tag) {
-//            if (tag == 0) {
-//                [self _presentCameraController];
-//            }
-//        }] show];
-//    }else if (photoLibraryAvailable){
-//        [[PAChoosePhotoActionView actionViewWithType:self.albumActionType buttons:@[@"从手机相册选择"] clickBlock:^(NSUInteger tag) {
-//            if (tag == 0) {
-//                [self _presentPhotoLibraryController];
-//            }
-//        }] show];
-//    }
+
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    if (photoLibraryAvailable && cameraAvailable) {
+        [alert addAction:[UIAlertAction actionWithTitle:@"相册" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            [self _presentPhotoLibraryController];
+        }]];
+        
+        [alert addAction:[UIAlertAction actionWithTitle:@"拍摄" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self _presentCameraController];
+        }]];
+    }else if (photoLibraryAvailable && !cameraAvailable) {
+        [alert addAction:[UIAlertAction actionWithTitle:@"相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self _presentPhotoLibraryController];
+        }]];
+    }
+    
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    
+    [self.rootController presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)_openBigBrowserWithIndexPath:(NSIndexPath *)indexPath{
-    HFFormAlbumPhotoModel *photo = self.photoAlbum.photos[indexPath.row];
-    
     // 进入查看大图
+    HFFormImageBrowserVC *browser = [[HFFormImageBrowserVC alloc] init];
+    browser.delegate = self;
+    browser.selectedIndex = indexPath.row;
+    [self.rootController presentViewController:browser animated:YES completion:nil];
 }
 
 // 打开相册
 - (void)_presentPhotoLibraryController {
     ALAuthorizationStatus author = [ALAssetsLibrary authorizationStatus];
     BOOL granted = YES;
-//    if (author == kCLAuthorizationStatusDenied || author == kCLAuthorizationStatusRestricted) {
-//        granted = NO;
-//    }
+    if (author == ALAuthorizationStatusRestricted || author == ALAuthorizationStatusDenied) {
+        granted = NO;
+    }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (granted) {
-            
-        }else {
-            [[[UIAlertView alloc] initWithTitle:@""
-                                        message:@"请在iPhone的\"设置-隐私-照片\"选项中，允许好房拓访问您的照片。"
-                                       delegate:nil
-                              cancelButtonTitle:@"确定"
-                              otherButtonTitles:nil] show];
-        }
-    });
+    if (granted) {
+        UIImagePickerController *image = [[UIImagePickerController alloc] init];
+        image.delegate = self;
+        [self.rootController presentViewController:image animated:YES completion:nil];
+        return;
+    }
+    [[[UIAlertView alloc] initWithTitle:@""
+                                message:@"请在iPhone的\"设置-隐私-照片\"选项中，允许好房拓访问您的照片。"
+                               delegate:nil
+                      cancelButtonTitle:@"确定"
+                      otherButtonTitles:nil] show];
 }
 
 // 打开相机
 - (void)_presentCameraController {
     void (^handler)(BOOL granted) = ^(BOOL granted) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (granted) {
-                UIImagePickerController *pickerViewController = [[UIImagePickerController alloc] init];
-                pickerViewController.allowsEditing = NO;
-                pickerViewController.delegate = self;
-                pickerViewController.sourceType = UIImagePickerControllerSourceTypeCamera;
-                
-                
-            }else {
-                [[[UIAlertView alloc] initWithTitle:@""
-                                            message:@"请在iPhone的\"设置-隐私-相机\"选项中，允许好房拓访问您的相机。"
-                                           delegate:nil
-                                  cancelButtonTitle:@"确定"
-                                  otherButtonTitles:nil] show];
-            }
-        });
+        if (granted) {
+            UIImagePickerController *pickerViewController = [[UIImagePickerController alloc] init];
+            pickerViewController.allowsEditing = NO;
+            pickerViewController.delegate = self;
+            pickerViewController.sourceType = UIImagePickerControllerSourceTypeCamera;
+            
+            [self.rootController presentViewController:pickerViewController animated:YES completion:nil];
+        }else {
+            [[[UIAlertView alloc] initWithTitle:@""
+                                        message:@"请在iPhone的\"设置-隐私-相机\"选项中，允许好房拓访问您的相机。"
+                                       delegate:nil
+                              cancelButtonTitle:@"确定"
+                              otherButtonTitles:nil] show];
+        }
     };
     
     [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
@@ -401,6 +329,9 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         _deleButton.alpha = 0.7;
         _deleButton.clipsToBounds = YES;
         _deleButton.layer.cornerRadius = 8.f;
+        _deleButton.titleLabel.font = [UIFont systemFontOfSize:12];
+        [_deleButton setTitle:@"删" forState:UIControlStateNormal];
+        [_deleButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
         [_deleButton addTarget:self action:@selector(delePhoto) forControlEvents:UIControlEventTouchUpInside];
         
         _tipLabel = [[UILabel alloc] init];
@@ -429,8 +360,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     _tipLabel.left = 0;
     _tipLabel.height = 20;
     
-    _deleButton.width = 16;
-    _deleButton.height = 16;
+    _deleButton.width = 20;
+    _deleButton.height = 20;
     _deleButton.left = self.width - _deleButton.width - 4;
     _deleButton.top = 5;
     
@@ -438,15 +369,15 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
 }
 
 - (void)delePhoto {
-//    WEAK_SELF;
-//    [[PAAlertView alertWithTitle:nil message:@"是否确认删除图片？" leftBtn:@"取消" rightBtn:@"确定" extraData:nil andCompleteBlock:^(PAAlertView *alertView, NSInteger buttonIndex) {
-//        if (buttonIndex == 1) {
-//            STRONG_SELF;
-//            if ([self.delegate respondsToSelector:@selector(deletePhotoOfCell:)]) {
-//                [self.delegate deletePhotoOfCell:self];
-//            }
-//        }
-//    }] show];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"是否确认删除图片？" preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"删除" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+         if ([self.delegate respondsToSelector:@selector(deletePhotoOfCell:)]) {
+             [self.delegate deletePhotoOfCell:self];
+         }
+    }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    
+    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)setItem:(HFFormAlbumPhotoModel *)item {

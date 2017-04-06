@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F1206341E96106F009F5E30 /* HFFormImageBrowserVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1206331E96106F009F5E30 /* HFFormImageBrowserVC.m */; };
 		8F4E62511E95C50B005C461C /* HFFormHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4E62501E95C50B005C461C /* HFFormHelper.m */; };
 		8F4E62541E95C798005C461C /* UIResponder+HFForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4E62531E95C798005C461C /* UIResponder+HFForm.m */; };
 		8F7F5C491E95C032003FB2EE /* NSBundle+HFForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C131E95C032003FB2EE /* NSBundle+HFForm.m */; };
@@ -43,11 +44,12 @@
 		8FBC609B1E7944F500B06CD7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC60991E7944F500B06CD7 /* Main.storyboard */; };
 		8FBC609D1E7944F500B06CD7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC609C1E7944F500B06CD7 /* Assets.xcassets */; };
 		8FBC60A01E7944F500B06CD7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8FBC609E1E7944F500B06CD7 /* LaunchScreen.storyboard */; };
-		8FBC60C01E7A61E300B06CD7 /* HFNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FBC60BF1E7A61E300B06CD7 /* HFNavigationController.m */; };
 		8FE9F7581E95CAAD001AFA60 /* NSString+HFForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FE9F7571E95CAAD001AFA60 /* NSString+HFForm.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8F1206321E96106F009F5E30 /* HFFormImageBrowserVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormImageBrowserVC.h; sourceTree = "<group>"; };
+		8F1206331E96106F009F5E30 /* HFFormImageBrowserVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormImageBrowserVC.m; sourceTree = "<group>"; };
 		8F4E624F1E95C50B005C461C /* HFFormHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormHelper.h; sourceTree = "<group>"; };
 		8F4E62501E95C50B005C461C /* HFFormHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormHelper.m; sourceTree = "<group>"; };
 		8F4E62521E95C798005C461C /* UIResponder+HFForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIResponder+HFForm.h"; sourceTree = "<group>"; };
@@ -117,8 +119,6 @@
 		8FBC609C1E7944F500B06CD7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8FBC609F1E7944F500B06CD7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8FBC60A11E7944F500B06CD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8FBC60BE1E7A61E300B06CD7 /* HFNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFNavigationController.h; sourceTree = "<group>"; };
-		8FBC60BF1E7A61E300B06CD7 /* HFNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFNavigationController.m; sourceTree = "<group>"; };
 		8FE9F7561E95CAAD001AFA60 /* NSString+HFForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HFForm.h"; sourceTree = "<group>"; };
 		8FE9F7571E95CAAD001AFA60 /* NSString+HFForm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HFForm.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -238,6 +238,8 @@
 				8F7F5C481E95C032003FB2EE /* HFormOptimizeInfo.m */,
 				8F4E624F1E95C50B005C461C /* HFFormHelper.h */,
 				8F4E62501E95C50B005C461C /* HFFormHelper.m */,
+				8F1206321E96106F009F5E30 /* HFFormImageBrowserVC.h */,
+				8F1206331E96106F009F5E30 /* HFFormImageBrowserVC.m */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -271,8 +273,6 @@
 				8FBC609E1E7944F500B06CD7 /* LaunchScreen.storyboard */,
 				8FBC60A11E7944F500B06CD7 /* Info.plist */,
 				8FBC60901E7944F500B06CD7 /* Supporting Files */,
-				8FBC60BE1E7A61E300B06CD7 /* HFNavigationController.h */,
-				8FBC60BF1E7A61E300B06CD7 /* HFNavigationController.m */,
 			);
 			path = HFFormTest;
 			sourceTree = "<group>";
@@ -375,6 +375,7 @@
 				8F7F5C5D1E95C032003FB2EE /* HFFormTitleView.m in Sources */,
 				8F7F5C4C1E95C032003FB2EE /* HFFormBasicTableViewCell.m in Sources */,
 				8F7F5C4A1E95C032003FB2EE /* HFFormAddSectionButtonTVC.m in Sources */,
+				8F1206341E96106F009F5E30 /* HFFormImageBrowserVC.m in Sources */,
 				8F7F5C511E95C032003FB2EE /* HFFormSubmitButtonTVC.m in Sources */,
 				8F7F5C4F1E95C032003FB2EE /* HFFormJumpTVC.m in Sources */,
 				8F7F5C5C1E95C032003FB2EE /* HFFormPickerView.m in Sources */,
@@ -391,7 +392,6 @@
 				8F7F5C531E95C032003FB2EE /* HFFormSwitchTVC.m in Sources */,
 				8F7F5C5F1E95C032003FB2EE /* HFFormTableVC.m in Sources */,
 				8F7F5C681E95C106003FB2EE /* HFFormAlbumModel.m in Sources */,
-				8FBC60C01E7A61E300B06CD7 /* HFNavigationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

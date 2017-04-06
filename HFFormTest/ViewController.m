@@ -15,10 +15,14 @@
 
 @implementation ViewController
 
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    
+    self.tableView.height = APP_Height + 20;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.title = @"学生信息登记";
 
     [self construcDatas];
 }
