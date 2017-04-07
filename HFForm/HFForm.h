@@ -209,6 +209,13 @@
 - (void)deleteSectionWithIndex:(NSUInteger)index;
 
 /**
+ 删除一个或者多个row
+ 
+ @param rows 要删除的一个或者多个row
+ */
+- (void)deleteRows:(NSArray <HFFormRowModel *> * _Nonnull)rows;
+
+/**
  在组(section模型)里删除一个或者多个row
 
  @param rows 装有要删除的一个或者多个row的数组

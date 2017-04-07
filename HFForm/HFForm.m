@@ -293,7 +293,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     for (HFFormSectionModel *section in sections) {
         NSInteger idx = [self _indexOfSection:section];
         [indexSet addIndexes:[NSIndexSet indexSetWithIndex:idx]];
-        [self.datas removeObject:section];
+        if([self.datas containsObject:section]) [self.datas removeObject:section];
     }
     [self.adpator deleteSection:indexSet];
     dispatch_semaphore_signal(_lock);
@@ -304,7 +304,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     HFFormSectionModel *section = [self obtainSectionWithKey:key];
     if (section) {
         [self.adpator deleteSection:[NSIndexSet indexSetWithIndex:[self _indexOfSection:section]]];
-        [self.datas removeObject:section];
+        if([self.datas containsObject:section]) [self.datas removeObject:section];
     }
     dispatch_semaphore_signal(_lock);
 }
@@ -317,6 +317,22 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     [self.adpator deleteSection:[NSIndexSet indexSetWithIndex:index]];
     [self.datas removeObjectAtIndex:index];
     
+    dispatch_semaphore_signal(_lock);
+}
+
+- (void)deleteRows:(NSArray <HFFormRowModel *> * _Nonnull)rows {
+    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    NSMutableArray *indexs = @[].mutableCopy;
+    for (NSInteger idx = 0; idx < rows.count; idx++) {
+        HFFormRowModel *row = rows[idx];
+        for (HFFormSectionModel *section in self.datas) {
+            if ([section.rows containsObject:row]) {
+                [indexs addObject:[NSIndexPath indexPathForRow:[self _indexOfRow:row inSection:section] inSection:[self _indexOfSection:section]]];
+                [section deleteRow:row];
+            }
+        }
+    }
+    if(indexs.count > 0) [self.adpator deleteRows:indexs];
     dispatch_semaphore_signal(_lock);
 }
 
@@ -333,7 +349,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         
         [section deleteRow:row];
     }
-    [self.adpator deleteRows:indexs];
+    if(indexs.count > 0) [self.adpator deleteRows:indexs];
     dispatch_semaphore_signal(_lock);
 }
 
@@ -343,7 +359,9 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         for (HFFormRowModel *model in section.rows) {
             if ([model.key isEqualToString:key]) {
                 [section deleteRow:model];
-                [self.adpator deleteRow:[self _obtainIndexWithRow:model]];
+                
+                NSIndexPath *indexPath = [self _obtainIndexWithRow:model];
+                if(indexPath) [self.adpator deleteRow:indexPath];
                 break;
                 *stop = YES;
             }
@@ -376,7 +394,8 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 }
 
 - (void)reloadRow:(HFFormRowModel * _Nonnull)row {
-    [self.adpator reloadRow:[self _obtainIndexWithRow:row]];
+    NSIndexPath *indexPath = [self _obtainIndexWithRow:row];
+    if(indexPath) [self.adpator reloadRow:indexPath];
 }
 
 - (void)reloadHeight {
