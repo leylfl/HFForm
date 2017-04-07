@@ -26,7 +26,7 @@
 
 
 /**
- 表单被选中后的促发
+ 表单被选中后的触发
 
  @param form 表单
  @param indexPath 位置
@@ -34,6 +34,17 @@
  @param cell cell
  */
 - (void)form:(HFForm * _Nonnull)form didSelectRowAtIndexPath:(NSIndexPath * _Nonnull)indexPath rowModel:(HFFormRowModel * _Nonnull)row tableViewCell:(UITableViewCell * _Nullable)cell;
+
+/**
+ row初始化的时候被触发
+ # 一般可以在这个地方设置cell代理等操作
+
+ @param form 表单
+ @param indexPath 位置
+ @param row 模型
+ @param cell cell
+ */
+- (void)form:(HFForm * _Nonnull)form setRowAtIndexPath:(NSIndexPath * _Nonnull)indexPath rowModel:(HFFormRowModel * _Nonnull)row tableViewCell:(UITableViewCell * _Nullable)cell;
 
 @end
 

@@ -557,6 +557,12 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     }
 }
 
+- (void)setRowAtIndexPath:(NSIndexPath *)indexPath rowModel:(HFFormRowModel *)row tableViewCell:(UITableViewCell *)cell {
+    if ([self.delegate respondsToSelector:@selector(form:setRowAtIndexPath:rowModel:tableViewCell:)]) {
+        [self.delegate form:self setRowAtIndexPath:indexPath rowModel:row tableViewCell:cell];
+    }
+}
+
 #pragma mark - Initialize
 - (instancetype)init {
     if (self = [super init]) {

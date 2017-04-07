@@ -16,6 +16,8 @@
 @optional
 - (void)didSelectRowAtIndexPath:(NSIndexPath * _Nullable)indexPath rowModel:(HFFormRowModel * _Nullable)row tableViewCell:(UITableViewCell * _Nullable)cell;
 
+- (void)setRowAtIndexPath:(NSIndexPath * _Nullable)indexPath rowModel:(HFFormRowModel * _Nullable)row tableViewCell:(UITableViewCell * _Nullable)cell;
+
 @end
 
 @interface HFFormAdaptor : NSObject<UITableViewDelegate, UITableViewDataSource>

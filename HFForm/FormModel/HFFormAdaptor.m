@@ -91,7 +91,13 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return [self captureRowModelWithIndexPath:indexPath].height;
+    HFFormRowModel *row = [self captureRowModelWithIndexPath:indexPath];
+    CGFloat height = row.height;
+    if (height == 0 && [row.cell isSubclassOfClass:[HFFormBasicTableViewCell class]]) {
+        height = [(HFFormBasicTableViewCell *)row.cell tableView:tableView heightWithRow:row];
+    }
+    
+    return height;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -102,6 +108,11 @@
         cell = [[row.cell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:row.cellIdentifier];
     }
     [cell updateData:row];
+    
+    if ([self.delegate respondsToSelector:@selector(setRowAtIndexPath:rowModel:tableViewCell:)]) {
+        [self.delegate setRowAtIndexPath:indexPath rowModel:row tableViewCell:cell];
+    }
+    
     return cell;
 }
 

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8F1206341E96106F009F5E30 /* HFFormImageBrowserVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1206331E96106F009F5E30 /* HFFormImageBrowserVC.m */; };
+		8F1206371E971F0F009F5E30 /* HFFormBasicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1206361E971F0F009F5E30 /* HFFormBasicModel.m */; };
 		8F4E62511E95C50B005C461C /* HFFormHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4E62501E95C50B005C461C /* HFFormHelper.m */; };
 		8F4E62541E95C798005C461C /* UIResponder+HFForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4E62531E95C798005C461C /* UIResponder+HFForm.m */; };
 		8F7F5C491E95C032003FB2EE /* NSBundle+HFForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C131E95C032003FB2EE /* NSBundle+HFForm.m */; };
@@ -50,6 +51,8 @@
 /* Begin PBXFileReference section */
 		8F1206321E96106F009F5E30 /* HFFormImageBrowserVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormImageBrowserVC.h; sourceTree = "<group>"; };
 		8F1206331E96106F009F5E30 /* HFFormImageBrowserVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormImageBrowserVC.m; sourceTree = "<group>"; };
+		8F1206351E971F0F009F5E30 /* HFFormBasicModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormBasicModel.h; sourceTree = "<group>"; };
+		8F1206361E971F0F009F5E30 /* HFFormBasicModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormBasicModel.m; sourceTree = "<group>"; };
 		8F4E624F1E95C50B005C461C /* HFFormHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormHelper.h; sourceTree = "<group>"; };
 		8F4E62501E95C50B005C461C /* HFFormHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormHelper.m; sourceTree = "<group>"; };
 		8F4E62521E95C798005C461C /* UIResponder+HFForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIResponder+HFForm.h"; sourceTree = "<group>"; };
@@ -209,6 +212,8 @@
 				8F7F5C351E95C032003FB2EE /* HFFormSectionModel.m */,
 				8F7F5C661E95C106003FB2EE /* HFFormAlbumModel.h */,
 				8F7F5C671E95C106003FB2EE /* HFFormAlbumModel.m */,
+				8F1206351E971F0F009F5E30 /* HFFormBasicModel.h */,
+				8F1206361E971F0F009F5E30 /* HFFormBasicModel.m */,
 			);
 			path = FormModel;
 			sourceTree = "<group>";
@@ -379,6 +384,7 @@
 				8F7F5C511E95C032003FB2EE /* HFFormSubmitButtonTVC.m in Sources */,
 				8F7F5C4F1E95C032003FB2EE /* HFFormJumpTVC.m in Sources */,
 				8F7F5C5C1E95C032003FB2EE /* HFFormPickerView.m in Sources */,
+				8F1206371E971F0F009F5E30 /* HFFormBasicModel.m in Sources */,
 				8F7F5C651E95C096003FB2EE /* UIView+Frame.m in Sources */,
 				8F7F5C501E95C032003FB2EE /* HFFormOptionsTVC.m in Sources */,
 				8F7F5C621E95C032003FB2EE /* HFormOptimizeInfo.m in Sources */,
