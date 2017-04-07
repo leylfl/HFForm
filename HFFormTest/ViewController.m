@@ -44,6 +44,24 @@
     row.keyboardType = UIKeyboardTypeNumberPad;
     [section appendRow:row];
     
+    row = [HFForm rowWithType:HFFormRowTypeOptions];
+    row.title = @"性别";
+    row.placeholder = @"请选择学生性别";
+    row.subRowsHandler = ^{
+        NSMutableArray *array = @[].mutableCopy;
+        HFFormRowModel *relRow = [HFForm row];
+        relRow.multiDatas = @[@"男",@"女"];
+        [array addObject:relRow];
+        return array;
+    };
+    [section appendRow:row];
+    
+    row = [HFForm rowWithType:HFFormRowTypeSwitch];
+    row.title = @"是否本地户籍";
+    row.value = @1;
+    row.keyboardType = UIKeyboardTypeNumberPad;
+    [section appendRow:row];
+    
     row = [HFForm rowWithType:HFFormRowTypeDefault];
     row.title = @"家庭住址";
     row.placeholder = @"请输入学生家庭住址";

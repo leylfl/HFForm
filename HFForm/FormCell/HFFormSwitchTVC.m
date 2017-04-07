@@ -22,7 +22,7 @@
         
         _switch = [[UISwitch alloc] init];
         _switch.on = YES;
-        _switch.onTintColor = UIColorFromRGB(0x6281c2);
+        _switch.onTintColor = [UIColor orangeColor];
         [_switch addTarget:self action:@selector(switchOperater:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:_switch];
     }
