@@ -59,9 +59,8 @@ row.placeholder = @"选择出生日期";
 ###### 图片
 ```Objective-C
 HFFormRowModel *row;
-row = [HFForm rowWithType:HFFormRowTypeDatePicker];
-row.title = @"出生日期";
-row.placeholder = @"选择出生日期";
+row = [HFForm rowWithType:HFFormRowTypeAlbum];
+row.title = @"学生照片";
 [self.form appendRow:row];
 ```
 ![](https://github.com/leylfl/HFForm/blob/master/HFFormTest/Photos/photo.png)
