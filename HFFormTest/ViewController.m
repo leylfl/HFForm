@@ -59,7 +59,6 @@
     row = [HFForm rowWithType:HFFormRowTypeSwitch];
     row.title = @"是否本地户籍";
     row.value = @1;
-    row.keyboardType = UIKeyboardTypeNumberPad;
     [section appendRow:row];
     
     row = [HFForm rowWithType:HFFormRowTypeDefault];

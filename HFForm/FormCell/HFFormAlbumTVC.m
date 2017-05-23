@@ -101,7 +101,10 @@
     
     if(row.value) {
         self.photoAlbum = row.value;
-        [self.collectionView reloadData];//[self _adjustRowHeight];
+        if (self.photoAlbum.photos.count >= 3 && self.photoAlbum.photos.count != self.maxCount) {
+            [self _adjustRowHeight];
+        }
+        [self.collectionView reloadData];
     }
 }
 
@@ -122,6 +125,23 @@
     self.collectionView.left        = 20;
     self.collectionView.width       = self.width - 30;
     self.collectionView.height      = self.height - self.collectionView.top - 15;
+}
+
++ (CGFloat)tableView:(UITableView *)tableView heightWithRow:(HFFormRowModel *)row indexPath:(NSIndexPath *)indexPath {
+    HFFormAlbumModel *model = row.value;
+    model.lineCount = @(1);
+    
+    NSInteger maxCount = [row.settings[@"maxCount"] integerValue];
+    CGFloat height = (THUMNAIL_HEIGHT) + 64;
+    
+    NSUInteger count = model.photos.count == maxCount ? model.photos.count : model.photos.count + 1;
+    if (maxCount > 0 && model && count > 3) {
+        NSUInteger col = ceil((CGFloat)count/ (CGFloat)3);
+        model.lineCount = @(col);
+        height = 65 + ((THUMNAIL_HEIGHT) * col) + 8 * (col - 1);
+    }
+    
+    return height;
 }
 
 #pragma mark - UICollectionViewDelegate & DataSource
@@ -219,12 +239,11 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
     // 如果相册模型里面的行数为空，说明是导入进来的数据，需要计算行数
     NSUInteger count = self.photoAlbum.photos.count == self.maxCount ? self.photoAlbum.photos.count : self.photoAlbum.photos.count + 1;
     NSUInteger col = ceil((CGFloat)count/ (CGFloat)3);
-    self.photoAlbum.lineCount = self.photoAlbum.lineCount ?: @(count);
     
     if (col != self.photoAlbum.lineCount.integerValue) {
         self.photoAlbum.lineCount = @(col);
         
-        self.row.height = 64 + THUMNAIL_HEIGHT * col + 8 * (col - 1);
+        self.row.height = 65 + ((THUMNAIL_HEIGHT) * col) + 8 * (col - 1);
         if (self.row.reloadHandler) {
             self.row.reloadHandler(HFFormRefreshTypeHeight);
         }

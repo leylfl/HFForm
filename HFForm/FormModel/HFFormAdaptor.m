@@ -94,7 +94,8 @@
     HFFormRowModel *row = [self captureRowModelWithIndexPath:indexPath];
     CGFloat height = row.height;
     if (height == 0 && [row.cell isSubclassOfClass:[HFFormBasicTableViewCell class]]) {
-        height = [(HFFormBasicTableViewCell *)row.cell tableView:tableView heightWithRow:row];
+        height = [row.cell tableView:tableView heightWithRow:row indexPath:indexPath];
+        row.height = height;
     }
     
     return height;

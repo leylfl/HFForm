@@ -9,9 +9,8 @@
 #import "HFFormBasicTableViewCell.h"
 
 typedef NS_ENUM(NSUInteger, HFFormTextViewType) {
-    HFFormTextViewTypeNone = 100, // 右上方空
-    HFFormTextViewTypeTip,        // 右上方给提示，比如：最大几个字
-    HFFormTextViewTVCLimited        // 右上方显示计算字数的提示，比如: 20/100
+    HFFormTextViewTypeTip       = 100, // 右上方给提示，比如：最大几个字
+    HFFormTextViewTypeNormal            // 右上方空
 };
 
 @interface HFFormTextViewTVC : HFFormBasicTableViewCell

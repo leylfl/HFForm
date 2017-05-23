@@ -14,19 +14,18 @@
 #import "HFFormTitleTVC.h"
 #import "HFFormOptionsTVC.h"
 #import "HFFormCustomTVC.h"
-#import "HFFormSupplementaryTVC.h"
 #import "HFFormSubmitButtonTVC.h"
 #import "HFFromDatePickerTVC.h"
 #import "HFFormAddSectionButtonTVC.h"
 #import "HFFormSwitchTVC.h"
 #import "HFFormJumpTVC.h"
 #import "HFFormTextViewTVC.h"
+#import "HFFormCheckBoxTVC.h"
+#import "HFFormTagsTVC.h"
 
 #import "HFFormAlbumModel.h"
 
 #import <objc/runtime.h>
-
-#import "NSString+HFForm.h"
 
 typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     HFFormPropertyTypeLiterals = 0, // 字面量
@@ -106,7 +105,6 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         }break;
             
         case HFFormRowTypeAlbum:{
-            row.height  = ((CGFloat)79/(CGFloat)105) * (([[UIScreen mainScreen] applicationFrame].size.width - 32 - (8 * (3 - 1))) / 3) + 64;
             row.cell    = [HFFormAlbumTVC class];
         }break;
             
@@ -131,10 +129,9 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         }break;
             
         case HFFormRowTypeText: {
-            row.height  = 76;
             row.cell    = [HFFormTextViewTVC class];
         }break;
-        
+            
         case HFFormRowTypeJump: {
             row.height  = 74;
             row.cell    = [HFFormJumpTVC class];
@@ -145,9 +142,12 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
             row.cell    = [HFFormSubmitButtonTVC class];
         }break;
             
-        case HFFormRowTypeSupplementary : {
-            row.height  = 48;
-            row.cell    = [HFFormSupplementaryTVC class];
+        case HFFormRowTypeCheckBox: {
+            row.cell    = [HFFormCheckBoxTVC class];
+        }break;
+            
+        case HFFormRowTypeTags: {
+            row.cell    = [HFFormTagsTVC class];
         }break;
             
         case HFFormRowTypeCustom: {
@@ -175,7 +175,6 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 - (void)appendSection:(HFFormSectionModel * _Nonnull)section atIndex:(NSUInteger)index {
     NSAssert(index < self.datas.count, @"添加section的时候越界了");
     
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     for (HFFormRowModel *row in section.rows) {
         [self _reConfigRow:row];
     }
@@ -183,24 +182,20 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     [self.datas insertObject:section atIndex:index];
     
     [self.adpator insertSection:[NSIndexSet indexSetWithIndex:index]];
-    dispatch_semaphore_signal(_lock);
 }
 
 - (void)appendRow:(HFFormRowModel * _Nonnull)row {
     NSAssert(self.datas.count <= 1, @"请使用appendRow:inSection方法，本方法只适用于一个section的情况");
     
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     HFFormSectionModel *section = self.datas.count == 1 ? self.datas.firstObject : [self.class section];
     [section appendRow:row];
     [self _reConfigRow:row];
     if (self.datas.count == 0) [self.datas addObject:section];
-    dispatch_semaphore_signal(_lock);
 }
 
 - (void)appendRows:(NSArray <HFFormRowModel *> *_Nonnull)rows below:(HFFormRowModel *_Nonnull)lastRow {
     NSAssert(self.datas.count >= 1, @"还没有初始化一个section");
     
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     NSMutableArray *indexs = @[].mutableCopy;
     HFFormSectionModel *section = self.datas.firstObject;
     for (NSInteger idx = 0; idx < rows.count; idx++) {
@@ -210,13 +205,11 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         [section appendRow:row adIndex:pos];
         [indexs addObject: [NSIndexPath indexPathForRow:pos inSection:0]];
     }
-
+    
     [self.adpator insertRows:indexs];
-    dispatch_semaphore_signal(_lock);
 }
 
 - (void)appendRows:(NSArray <HFFormRowModel *> * _Nonnull)rows inSection:(HFFormSectionModel * _Nonnull)section {
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     NSMutableArray *indexs = @[].mutableCopy;
     for (NSInteger idx = 0; idx < rows.count; idx++) {
         HFFormRowModel *row = rows[idx];
@@ -226,11 +219,9 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         [indexs addObject:[NSIndexPath indexPathForRow:section.rows.count - 1 inSection:[self _indexOfSection:section]]];
     }
     [self.adpator insertRows:indexs];
-    dispatch_semaphore_signal(_lock);
 }
 
 - (void)appendRows:(NSArray <HFFormRowModel *> * _Nonnull)rows inSection:(HFFormSectionModel * _Nonnull)section rowAtSection:(NSUInteger)index {
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     NSMutableArray *indexs = @[].mutableCopy;
     for (NSInteger idx = 0; idx < rows.count; idx++) {
         HFFormRowModel *row = rows[idx];
@@ -240,7 +231,6 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         [indexs addObject:[NSIndexPath indexPathForRow:index + idx inSection:[self _indexOfSection:section]]];
     }
     [self.adpator insertRows:indexs];
-    dispatch_semaphore_signal(_lock);
 }
 
 - (HFFormSectionModel * _Nonnull)sectionOfIndex:(NSUInteger)index {
@@ -288,40 +278,31 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 }
 
 - (void)deleteSections:(NSArray <HFFormSectionModel *> * _Nonnull)sections {
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     NSMutableIndexSet *indexSet = [NSMutableIndexSet indexSet];
     for (HFFormSectionModel *section in sections) {
         NSInteger idx = [self _indexOfSection:section];
         [indexSet addIndexes:[NSIndexSet indexSetWithIndex:idx]];
-        if([self.datas containsObject:section]) [self.datas removeObject:section];
+        [self.datas removeObject:section];
     }
     [self.adpator deleteSection:indexSet];
-    dispatch_semaphore_signal(_lock);
 }
 
 - (void)deleteSectionWithKey:(NSString * _Nonnull)key {
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     HFFormSectionModel *section = [self obtainSectionWithKey:key];
     if (section) {
         [self.adpator deleteSection:[NSIndexSet indexSetWithIndex:[self _indexOfSection:section]]];
-        if([self.datas containsObject:section]) [self.datas removeObject:section];
+        [self.datas removeObject:section];
     }
-    dispatch_semaphore_signal(_lock);
 }
 
 - (void)deleteSectionWithIndex:(NSUInteger)index {
     NSAssert(index < self.datas.count, @"要删除的组越界了");
     
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
-    
     [self.adpator deleteSection:[NSIndexSet indexSetWithIndex:index]];
     [self.datas removeObjectAtIndex:index];
-    
-    dispatch_semaphore_signal(_lock);
 }
 
 - (void)deleteRows:(NSArray <HFFormRowModel *> * _Nonnull)rows {
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     NSMutableArray *indexs = @[].mutableCopy;
     for (NSInteger idx = 0; idx < rows.count; idx++) {
         HFFormRowModel *row = rows[idx];
@@ -333,41 +314,35 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         }
     }
     if(indexs.count > 0) [self.adpator deleteRows:indexs];
-    dispatch_semaphore_signal(_lock);
 }
 
 - (void)deleteRows:(NSArray <HFFormRowModel *> * _Nonnull)rows inSection:(HFFormSectionModel * _Nonnull)section {
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
     // 检查是否存在这个row
     if(![section.rows containsObject:rows.firstObject]) return;
     NSMutableArray *indexs = @[].mutableCopy;
     for (NSInteger idx = 0; idx < rows.count; idx++) {
         HFFormRowModel *row = rows[idx];
-        [self _reConfigRow:row];
         
         [indexs addObject:[NSIndexPath indexPathForRow:[self _indexOfRow:row inSection:section] + idx inSection:[self _indexOfSection:section]]];
         
         [section deleteRow:row];
     }
     if(indexs.count > 0) [self.adpator deleteRows:indexs];
-    dispatch_semaphore_signal(_lock);
 }
 
 - (void)deleRowWithKey:(NSString * _Nonnull)key {
-    dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
+    WEAK_SELF;
     [self.datas enumerateObjectsUsingBlock:^(HFFormSectionModel * _Nonnull section, NSUInteger idx, BOOL * _Nonnull stop) {
+        STRONG_SELF;
         for (HFFormRowModel *model in section.rows) {
             if ([model.key isEqualToString:key]) {
                 [section deleteRow:model];
-                
-                NSIndexPath *indexPath = [self _obtainIndexWithRow:model];
-                if(indexPath) [self.adpator deleteRow:indexPath];
+                [self.adpator deleteRow:[self _obtainIndexWithRow:model]];
                 break;
                 *stop = YES;
             }
         }
     }];
-    dispatch_semaphore_signal(_lock);
 }
 
 - (NSUInteger)obtainSectionCount {
@@ -383,7 +358,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
                 break;
             }
         }
-        break;
+        if(contain) break;
     }
     return contain;
 }
@@ -394,8 +369,16 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 }
 
 - (void)reloadRow:(HFFormRowModel * _Nonnull)row {
-    NSIndexPath *indexPath = [self _obtainIndexWithRow:row];
-    if(indexPath) [self.adpator reloadRow:indexPath];
+    [self.adpator reloadRow:[self _obtainIndexWithRow:row]];
+}
+
+- (void)reloadRows:(NSArray <HFFormRowModel *> * _Nonnull)rows {
+    NSMutableArray *indexPaths = @[].mutableCopy;
+    for (HFFormRowModel *row in rows) {
+        NSIndexPath *indexPath = [self _obtainIndexWithRow:row];
+        if(indexPath) [indexPaths addObject:indexPath];
+    }
+    if(indexPaths.count > 0) [self.adpator reloadRows:indexPaths];
 }
 
 - (void)reloadHeight {
@@ -404,14 +387,32 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 
 - (NSDictionary * _Nullable)exportDataToDictionary {
     NSMutableDictionary *params = @{}.mutableCopy;
+    NSArray *ignorekeys = nil;
+    if ([self.delegate respondsToSelector:@selector(ignoreKeys)]) {
+        ignorekeys = [self.delegate ignoreKeys];
+    }
     for (HFFormSectionModel *section in self.datas) {
         for (HFFormRowModel *row in section.rows) {
             if (row.subRows.count > 0) {
                 for (HFFormRowModel *subRow in row.subRows) {
-                    if(subRow.key && subRow.key.length > 0) params[subRow.key] = subRow.value;
+                    if(subRow.key && subRow.key.length > 0){
+                        if (ignorekeys && [ignorekeys containsObject:subRow.key]) {
+                            continue;
+                        }
+                        params[subRow.key] = subRow.value;
+                    }
                 }
             }else{
-                if(row.key && row.key.length > 0) params[row.key] = row.value;
+                if(row.key && row.key.length > 0) {
+                    if (ignorekeys && [ignorekeys containsObject:row.key]) {
+                        continue;
+                    }
+                    if (row.type == HFFormRowTypeAlbum) {
+                        params[row.key] = [(HFFormAlbumModel *)row.value postDataFormat];
+                    }else{
+                        params[row.key] = row.value;
+                    }
+                }
             }
         }
     }
@@ -437,10 +438,35 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
                                 NSString *replaceKey = dict[name];
                                 if (replaceKey) [object setValue:row.value forKey:replaceKey];
                                 NSString *postValue = [(HFFormAlbumModel *)row.value postDataFormat];
-                                if(postValue) [object setValue:postValue forKey:name];
+                                if(postValue) {
+                                    [object setValue:postValue forKey:name];
+                                    row.content = postValue;
+                                }
                             }
                         }else{
-                            [object setValue:row.value forKey:name];
+                            HFFormPropertyType type = [self _getTypeWithString:[NSString stringWithUTF8String:property_getAttributes(property)]];
+                            switch (type) {
+                                case HFFormPropertyTypeString:{
+                                    if ([row.value isKindOfClass:[NSString class]]) {
+                                        [object setValue:row.value forKey:name];
+                                    }else if ([row.value isKindOfClass:[NSNumber class]]) {
+                                        [object setValue:[NSString stringWithFormat:@"%@",row.value] forKey:name];
+                                    }
+                                }break;
+                                    
+                                case HFFormPropertyTypeNumber:{
+                                    if ([row.value isKindOfClass:[NSNumber class]]) {
+                                        [object setValue:row.value forKey:name];
+                                    }else if ([row.value isKindOfClass:[NSString class]]) {
+                                        [object setValue:@([row.value doubleValue]) forKey:name];
+                                    }
+                                }break;
+                                    
+                                default:
+                                    [object setValue:row.value forKey:name];
+                                    break;
+                            }
+                            
                         }
                     }else if(!row.value && value) {
                         value = nil;
@@ -465,6 +491,11 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         for (NSInteger idx = 0; idx < count; idx++) {
             objc_property_t property  = properties[idx];
             NSString *name = [NSString stringWithUTF8String:property_getName(property)];
+            if ([self.delegate respondsToSelector:@selector(ignoreKeys)]) {
+                if ([[self.delegate ignoreKeys] containsObject:name]) {
+                    continue;
+                }
+            }
             id value = [obj valueForKey:name];
             dict[name] = value;
             
@@ -489,37 +520,64 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 - (void)importData:(id _Nonnull)data {
     if (!self.datas || self.datas.count == 0) return;
     
-    if ([data isKindOfClass:[NSObject class]]) {
-        unsigned int count;
-        NSObject *obj = (NSObject *)data;
-        self.originalModel = obj;
-        objc_property_t *properties = class_copyPropertyList([obj class], &count);
-        for (NSInteger idx = 0; idx < count; idx++) {
-            objc_property_t property  = properties[idx];
-            NSString *name = [NSString stringWithUTF8String:property_getName(property)];
-            id value = [obj valueForKey:name];
-            NSArray *rows = [self _obtainAllRows];
-            for (HFFormRowModel *row in rows) {
-                NSString *key = row.key;
-                if ([key isEqualToString:name]) {
-                    if (row.type == HFFormRowTypeAlbum) {
-                        id replaceValue = nil;
-                        if ([self.delegate respondsToSelector:@selector(replaceProperty)]) {
-                            NSDictionary *dict = [self.delegate replaceProperty];
-                            replaceValue = [obj valueForKey:dict[key]];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if ([data isKindOfClass:[NSObject class]]) {
+            unsigned int count;
+            NSObject *obj = (NSObject *)data;
+            self.originalModel = obj;
+            objc_property_t *properties = class_copyPropertyList([obj class], &count);
+            for (NSInteger idx = 0; idx < count; idx++) {
+                objc_property_t property  = properties[idx];
+                NSString *name = [NSString stringWithUTF8String:property_getName(property)];
+                id value = [obj valueForKey:name];
+                NSArray *rows = [self _obtainAllRows];
+                for (HFFormRowModel *row in rows) {
+                    NSString *key = row.key;
+                    if ([key isEqualToString:name]) {
+                        if (row.type == HFFormRowTypeAlbum) {
+                            id replaceValue = nil;
+                            if ([self.delegate respondsToSelector:@selector(replaceProperty)]) {
+                                NSDictionary *dict = [self.delegate replaceProperty];
+                                replaceValue = [obj valueForKey:dict[key]];
+                            }else{
+                                replaceValue = value;
+                            }
+                            row.value = replaceValue;
+                            row.content = [obj valueForKey:key];
+                        }else if (row.type == HFFormRowTypeDefault || row.type == HFFormRowTypeText) {
+                            if (value) {
+                                if ([value isKindOfClass:[NSString class]] && [value length] > 0) {
+                                    row.value = value;
+                                }else if(![value isKindOfClass:[NSString class]]){
+                                    if ([value isKindOfClass:[NSNumber class]]) {
+                                        if (![value isEqualToNumber:@0]) {
+                                            row.value = [NSString stringWithFormat:@"%@",value];
+                                        }
+                                    }else{
+                                        row.value = [NSString stringWithFormat:@"%@",value];
+                                    }
+                                    
+                                }
+                            }
                         }else{
-                            replaceValue = value;
+                            if ([value isKindOfClass:[NSString class]]) {
+                                if ([value length] > 0) {
+                                    row.value = value;
+                                }
+                            }else{
+                                row.value = value;
+                            }
                         }
-                        row.value = replaceValue;
-                    }else{
-                        row.value = value;
+                        break;
                     }
-                    break;
                 }
             }
+            free(properties);
         }
-        free(properties);
-    }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self reloadData];
+        });
+    });
 }
 
 - (BOOL)checkEditedWithModel:(id _Nullable)model {
@@ -532,35 +590,67 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 
 - (BOOL)checkRowFinished {
     BOOL finish = YES;
-    NSArray *rows = [self _obtainAllRows];
-    // 检验是否要必填的
-    for (HFFormRowModel *row in rows) {
-        if (row.neccesary) {
-            if(!row.value) {
-                if (!row.key && row.subRows.count > 0) {
+    for (HFFormSectionModel *section in self.datas) {
+        // 检验是否要必填的
+        for (HFFormRowModel *row in section.rows) {
+            // 本身就是必填项，就校验有没有填值
+            if (row.neccesary) {
+                // 多选项
+                if (row.subRows && row.subRows.count > 0) {
                     for (HFFormRowModel *subRow in row.subRows) {
-                        if (!subRow.value) {
-                            [HFFormHelper showNotice:[NSString stringWithFormat:@"%@是必填项!", row.title]];
-                            finish = NO;
-                            break;
+                        if (subRow.neccesary) {
+                            if (!subRow.value) {
+                                finish = NO;
+                                
+                                if(row.invalidHandler) row.invalidHandler();
+                                [HFFormHelper showNotice:[NSString stringWithFormat:@"请选择%@", row.title]];
+                                
+                                break;
+                            }
                         }
                     }
-                    if(!finish) break;
-                }else{
-                    [HFFormHelper showNotice:[NSString stringWithFormat:@"%@是必填项!", row.title]];
+                }
+                if (!finish) break;
+                
+                if (!row.value) {
+                    if(row.invalidHandler) row.invalidHandler();
+                    if (row.type == HFFormRowTypeDefault || row.type == HFFormRowTypeText) {
+                        [HFFormHelper showNotice:[NSString stringWithFormat:@"请输入%@", row.title]];
+                    }else{
+                        [HFFormHelper showNotice:[NSString stringWithFormat:@"请选择%@", row.title]];
+                    }
+                    
                     finish = NO;
                     break;
                 }
+                // 多选项的
+            }else if (row.subRows && row.subRows.count > 0) {
+                for (HFFormRowModel *subRow in row.subRows) {
+                    if (subRow.neccesary) {
+                        if (!subRow.value) {
+                            finish = NO;
+                            
+                            if(row.invalidHandler) row.invalidHandler();
+                            [HFFormHelper showNotice:[NSString stringWithFormat:@"请选择%@", row.title]];
+                            
+                            break;
+                        }
+                    }
+                }
+                
+                if(!finish) break;
             }
-        }
-        if (row.value) {
-            // 检验是否有验证条件，如果有则校验
-            if (row.checkHandler) {
-                NSError *error = row.checkHandler(row.value);
-                if (error) {
-                    [HFFormHelper showNotice:error.localizedDescription];
-                    finish = NO;
-                    break;
+            
+            if (finish && row.value) {
+                // 检验是否有验证条件，如果有则校验
+                if (row.checkHandler) {
+                    NSError *error = row.checkHandler(row.value);
+                    if (error) {
+                        if(row.invalidHandler) row.invalidHandler();
+                        [HFFormHelper showNotice:error.localizedDescription];
+                        finish = NO;
+                        break;
+                    }
                 }
             }
         }
@@ -647,14 +737,22 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     for (HFFormSectionModel *section in self.datas) {
         for (HFFormRowModel *row in section.rows) {
             if (row.value) {
-                _change = YES;
-                break;
+                if([row.value isKindOfClass:[NSString class]] && [row.value length] == 0) {
+                    continue;
+                }else{
+                    _change = YES;
+                    break;
+                }
             }
             if (row.subRows.count > 0) {
                 for (HFFormRowModel *subRow in row.subRows) {
                     if (subRow.value) {
-                        _change = YES;
-                        break;
+                        if([subRow.value isKindOfClass:[NSString class]] && [subRow.value length] == 0) {
+                            continue;
+                        }else{
+                            _change = YES;
+                            break;
+                        }
                     }
                 }
                 if (_change) break;
@@ -686,11 +784,22 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
                             }break;
                                 
                             case HFFormPropertyTypeString: {
-                                change = ![(NSString *)propertyValue isEqualToString:(NSString *)row.value];
+                                if ([row.value isKindOfClass:[NSString class]]) {
+                                    change = ![[NSString stringWithFormat:@"%@", propertyValue] isEqualToString:(NSString *)row.value];
+                                }else if (row.type == HFFormRowTypeAlbum) {
+                                    if(propertyValue && row.content) change = ![(NSString *)propertyValue isEqualToString:row.content];
+                                }
+                                
                             }break;
                                 
                             case HFFormPropertyTypeNumber:{
-                                change = ![(NSNumber *)propertyValue isEqualToNumber:(NSNumber *)row.value];
+                                NSNumber *value = nil;
+                                if ([row.value isKindOfClass:[NSString class]]) {
+                                    value = @([row.value doubleValue]);
+                                }else if([row.value isKindOfClass:[NSNumber class]]) {
+                                    value = row.value;
+                                }
+                                if(value) change = ![(NSNumber *)propertyValue isEqualToNumber:value];
                             }break;
                                 
                             case HFFormPropertyTypeData:{
@@ -786,7 +895,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     HFFormPropertyType pType;
     switch (type.UTF8String[0]) {
         case 'T':
-            type = [type getMatchesForRegex:@"\"[\u4e00-\u9fa5a-zA-Z0-9]*\""].firstObject;
+            type = [self type:type getMatchesForRegex:@"\"[\u4e00-\u9fa5a-zA-Z0-9]*\""].firstObject;
             type = [type stringByReplacingOccurrencesOfString:@"\"" withString:@""];
             if ([type isEqualToString:@"NSString"] || [type isEqualToString:@"NSMutableString"]) {
                 pType = HFFormPropertyTypeString;
@@ -802,6 +911,8 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
                 pType = HFFormPropertyTypeObject;
             }else if ([type isEqualToString:@"int"] || [type isEqualToString:@"long"] || [type isEqualToString:@"float"] || [type isEqualToString:@"double"] || [type isEqualToString:@"BOOL"]) {
                 pType = HFFormPropertyTypeLiterals;
+            }else{
+                pType = HFFormPropertyTypeUnknown;
             }
             break;
             
@@ -810,6 +921,28 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
             break;
     }
     return pType;
+}
+
+- (NSArray *)type:(NSString *)type getMatchesForRegex:(NSString *)regex{
+    NSMutableArray * array = [NSMutableArray arrayWithCapacity:1];
+    
+    NSError * error;
+    NSRegularExpression * expression = [NSRegularExpression regularExpressionWithPattern:regex options:NSRegularExpressionCaseInsensitive error:&error];
+    NSArray * matches                = [expression matchesInString:type options:0 range:NSMakeRange(0, type.length)];
+    for (int i = 0; i < matches.count; i++) {
+        NSTextCheckingResult * result = [matches objectAtIndex:i];
+        
+        for (int j = 0; j < result.numberOfRanges; j++) {
+            NSRange range = [result rangeAtIndex:j];
+            if (range.location == NSNotFound) {
+                continue;
+            }
+            NSString * string = [type substringWithRange:range];
+            [array addObject:string];
+        }
+    }
+    
+    return array;
 }
 
 @end

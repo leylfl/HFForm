@@ -18,6 +18,6 @@
 
 - (void)updateData:(HFFormRowModel *)row;
 
-- (CGFloat)tableView:(UITableView *)tableView heightWithRow:(HFFormBasicModel *)row;
++ (CGFloat)tableView:(UITableView *)tableView heightWithRow:(HFFormRowModel *)row indexPath:(NSIndexPath *)indexPath;
 
 @end

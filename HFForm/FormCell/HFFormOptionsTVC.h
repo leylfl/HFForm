@@ -13,13 +13,6 @@ typedef NS_ENUM(NSUInteger, HFFormOptionsType){
     HFFormOptionsTypeFloor
 };
 
-@interface HFFormOptionsInterModel : NSObject
-
-@property (nonatomic, copy)  NSString *optionValue;
-@property (nonatomic, strong) NSNumber *optionID;
-
-@end
-
 @interface HFFormOptionsTVC : HFFormBasicTableViewCell<UIPickerViewDelegate, UIPickerViewDataSource>
 
 @end

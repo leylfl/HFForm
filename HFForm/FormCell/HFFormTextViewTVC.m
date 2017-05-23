@@ -23,7 +23,6 @@
     UILabel     *_tipLabel;
     UITextView  *_textView;
     NSUInteger  _lastCharCount;
-    CGFloat     _lastHeight;
 }
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
@@ -35,7 +34,6 @@
         
         _tipLabel = [[UILabel alloc] init];
         _tipLabel.font          = [UIFont systemFontOfSize:12];
-        _tipLabel.textAlignment = NSTextAlignmentRight;
         _tipLabel.textColor     = UIColorFromRGB(0x878787);
         [self.contentView addSubview:_tipLabel];
         
@@ -46,8 +44,9 @@
         _textView.scrollEnabled = NO;
         [self.contentView addSubview:_textView];
         
-        self.textViewType = HFFormTextViewTypeNone;
+        self.textViewType = HFFormTextViewTypeTip;
         self.maxCount = NSUIntegerMax;
+        self.minCount = 0;
     }
     return self;
 }
@@ -55,46 +54,63 @@
 - (void)updateData:(HFFormRowModel *)row {
     [super updateData:row];
     
+    if(row.value && [row.value isKindOfClass:[NSString class]] && [row.value length] == 0) row.value = nil; // 兼容后台即使没数据也会传个空字符串回来
+    
     _titleLabel.text = row.title;
-    _textView.text = row.value ?: row.placeholder;
-    _textView.textColor = row.value ? UIColorFromRGB(0x222222) : UIColorFromRGB(0xe1e1e1);
+    _textView.text = (row.value && [row.value length] > 0) ? row.value : row.placeholder;
+    _textView.textColor = (row.value && [row.value length] > 0) ? UIColorFromRGB(0x222222) : UIColorFromRGB(0xe1e1e1);
+    
+    _textView.editable = !row.disable;
     
     switch (self.textViewType) {
-        case HFFormTextViewTypeNone:{
-            _tipLabel.text = @"";
+        case HFFormTextViewTypeNormal:{
+            _tipLabel.hidden = YES;
         }break;
             
         case HFFormTextViewTypeTip:{
             _tipLabel.text = [NSString stringWithFormat:@"至少输入%lu个字", (unsigned long)self.minCount];
         }break;
             
-        case HFFormTextViewTVCLimited: {
-            _tipLabel.text = [NSString stringWithFormat:@"0/%lu", (unsigned long)self.maxCount];
-        };
-            
         default:
             break;
     }
     
-    [self setNeedsLayout];
+    if(self.maxCount == NSUIntegerMax || self.minCount == 0) _tipLabel.hidden = YES;
+    
+    [self _adjustHeight];
 }
 
 #pragma mark - UITextViewDelegate
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     _textView.text = self.row.value ?: @"";
+    
     _textView.textColor = UIColorFromRGB(0x222222);
     
-    _titleLabel.textColor = [UIColor orangeColor];
-    self.lineView.backgroundColor = [UIColor orangeColor];
+    _titleLabel.textColor = UIColorFromRGB(0x6281c2);
+    _tipLabel.textColor = UIColorFromRGB(0x6281c2);
+    self.lineView.backgroundColor = UIColorFromRGB(0x6281c2);
+    
+    long count = (textView.text && textView.text.length > 0) ? textView.text.length : 0;
+    _tipLabel.text = [NSString stringWithFormat:@"%ld/%lu", count,(unsigned long)self.maxCount];
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView {
     _titleLabel.textColor = UIColorFromRGB(0x555555);
     self.lineView.backgroundColor = UIColorFromRGB(0xe1e1e1);
+    _tipLabel.textColor = UIColorFromRGB(0x878787);
     
     if (textView.text.length == 0){
         textView.textColor  = UIColorFromRGB(0xe1e1e1);
         textView.text       = self.row.placeholder;
+        
+        _tipLabel.text = [NSString stringWithFormat:@"至少输入%lu个字", (unsigned long)self.minCount];
+        
+        self.row.value = nil;
+        
+        [self setNeedsLayout];
+        
+        [self _adjustHeight];
+        
         return;
     }
     
@@ -102,34 +118,25 @@
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
-    // 如果是HFFormTextViewTVCLimited，需要做限制处理
-    if (self.textViewType == HFFormTextViewTVCLimited) {
-        UITextRange *selectedRange = [textView markedTextRange];
-        UITextPosition *highlightedPos = [textView positionFromPosition:selectedRange.start offset:0];
-        
-        if (selectedRange && highlightedPos) {
-            return;
-        }
-        
-        
-        NSString *showText = [NSString stringWithFormat:@"%lu/%lu",MAX(0,textView.text.length), (unsigned long)self.maxCount];
-        NSMutableAttributedString *attri = [[NSMutableAttributedString alloc] initWithString:showText];
-        if (textView.text.length > self.maxCount) {
-            if (textView.text.length > _lastCharCount) {
-                [HFFormHelper showNotice:[NSString stringWithFormat:@"输入字数不可超过%lu字",(unsigned long)self.maxCount]];
-            }
-            
-            [attri setAttributes:@{NSForegroundColorAttributeName : [UIColor redColor]} range:[showText rangeOfString:[NSString stringWithFormat:@"%lu",(unsigned long)textView.text.length]]];
-        }else{
-            _tipLabel.textColor = [UIColor lightGrayColor];
-        }
-        _tipLabel.attributedText = attri;
-        
-        _lastCharCount = textView.text.length;
-        
+    UITextRange *selectedRange = [textView markedTextRange];
+    UITextPosition *highlightedPos = [textView positionFromPosition:selectedRange.start offset:0];
+    
+    if (selectedRange && highlightedPos) {
+        return;
     }
+    
+    if (textView.text.length > self.maxCount) {
+        if (textView.text.length > _lastCharCount) {
+            [HFFormHelper showNotice:[NSString stringWithFormat:@"输入字数不可超过%lu字",(unsigned long)self.maxCount]];
+            
+            textView.text = [textView.text substringToIndex:self.maxCount];
+        }
+    }
+    
+    _tipLabel.text = [NSString stringWithFormat:@"%lu/%lu",(unsigned long)_textView.text.length, (unsigned long)self.maxCount];
+    _lastCharCount = textView.text.length;
     // 自动偏移
-    [self setNeedsLayout];
+    [self _adjustHeight];
 }
 
 - (void)layoutSubviews {
@@ -137,27 +144,35 @@
     
     _titleLabel.left    = 16;
     _titleLabel.top     = 12;
-    _titleLabel.width   = self.width - _titleLabel.left - 100;
+    _titleLabel.width   = [HFFormHelper sizeWithText:_titleLabel.text font:_titleLabel.font maxSize:CGSizeMake(APP_WIDTH / 2, 20)].width + 5;
     _titleLabel.height  = 24;
     
-    _tipLabel.width     = [HFFormHelper sizeWithText:_tipLabel.text font:_tipLabel.font maxSize:CGSizeMake(100, 20)].width + 5;
+    _tipLabel.width     = [HFFormHelper sizeWithText:_tipLabel.text font:_tipLabel.font maxSize:CGSizeMake(100, 20)].width + 10;
     _tipLabel.height    = 20;
-    _tipLabel.left      = self.width - 16 - _tipLabel.width;
+    _tipLabel.left      = _titleLabel.right;
     _tipLabel.top       = 14;
     
     _textView.left      = 12;
     _textView.top       = _titleLabel.bottom;
     _textView.width     = self.width - 32;
     _textView.height    = [_textView sizeThatFits:CGSizeMake(self.width - 32, MAXFLOAT)].height;
+}
 
-    BOOL change = fabs((16 + 24 + _textView.height) - self.row.height) > 5; // 给予5的容错
+- (void)_adjustHeight {
+    CGFloat height = [_textView sizeThatFits:CGSizeMake(APP_WIDTH - 32, MAXFLOAT)].height;
+    BOOL change = fabs((16 + 24 + height) - self.row.height) > 5; // 给予5的容错
     if (change) {
-        self.row.height = 16 + 24 + _textView.height;
-        
+        self.row.height = 16 + 24 + height;
         if (self.row.reloadHandler) {
             self.row.reloadHandler(HFFormRefreshTypeHeight);
         }
     }
+}
+
++ (CGFloat)tableView:(UITableView *)tableView heightWithRow:(HFFormRowModel *)row indexPath:(NSIndexPath *)indexPath {
+    NSString *text = (row.value && [row.value isKindOfClass:[NSString class]] && [row.value length] > 0) ? row.value : row.placeholder;
+    CGFloat height = [HFFormHelper sizeWithText:text font:[UIFont systemFontOfSize:16] maxSize:CGSizeMake(APP_WIDTH - 32 - 15, MAXFLOAT)].height + 2;
+    return height + 16 + 24 + 16 > 76 ? height + 16 + 24 + 16 : 76;
 }
 
 @end

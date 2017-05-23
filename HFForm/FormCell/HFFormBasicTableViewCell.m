@@ -44,7 +44,7 @@
     self.lineView.top       = self.height - 0.5;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightWithRow:(HFFormBasicModel *)row {
++ (CGFloat)tableView:(UITableView *)tableView heightWithRow:(HFFormRowModel *)row indexPath:(NSIndexPath *)indexPath {
     return 0;
 }
 

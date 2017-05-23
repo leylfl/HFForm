@@ -11,6 +11,9 @@
 		8F1206371E971F0F009F5E30 /* HFFormBasicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F1206361E971F0F009F5E30 /* HFFormBasicModel.m */; };
 		8F4E62511E95C50B005C461C /* HFFormHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4E62501E95C50B005C461C /* HFFormHelper.m */; };
 		8F4E62541E95C798005C461C /* UIResponder+HFForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F4E62531E95C798005C461C /* UIResponder+HFForm.m */; };
+		8F6378411ED43B8D005B73A6 /* HFFormCheckBoxTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F63783E1ED43B8D005B73A6 /* HFFormCheckBoxTVC.m */; };
+		8F6378421ED43B8D005B73A6 /* HFFormTagsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6378401ED43B8D005B73A6 /* HFFormTagsTVC.m */; };
+		8F6378451ED43E91005B73A6 /* HFFormOptionsInterModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6378441ED43E91005B73A6 /* HFFormOptionsInterModel.m */; };
 		8F7F5C491E95C032003FB2EE /* NSBundle+HFForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C131E95C032003FB2EE /* NSBundle+HFForm.m */; };
 		8F7F5C4A1E95C032003FB2EE /* HFFormAddSectionButtonTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C161E95C032003FB2EE /* HFFormAddSectionButtonTVC.m */; };
 		8F7F5C4B1E95C032003FB2EE /* HFFormAlbumTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C181E95C032003FB2EE /* HFFormAlbumTVC.m */; };
@@ -20,7 +23,6 @@
 		8F7F5C4F1E95C032003FB2EE /* HFFormJumpTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C201E95C032003FB2EE /* HFFormJumpTVC.m */; };
 		8F7F5C501E95C032003FB2EE /* HFFormOptionsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C221E95C032003FB2EE /* HFFormOptionsTVC.m */; };
 		8F7F5C511E95C032003FB2EE /* HFFormSubmitButtonTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C241E95C032003FB2EE /* HFFormSubmitButtonTVC.m */; };
-		8F7F5C521E95C032003FB2EE /* HFFormSupplementaryTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C261E95C032003FB2EE /* HFFormSupplementaryTVC.m */; };
 		8F7F5C531E95C032003FB2EE /* HFFormSwitchTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C281E95C032003FB2EE /* HFFormSwitchTVC.m */; };
 		8F7F5C541E95C032003FB2EE /* HFFormTextViewTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C2A1E95C032003FB2EE /* HFFormTextViewTVC.m */; };
 		8F7F5C551E95C032003FB2EE /* HFFormTitleTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C2C1E95C032003FB2EE /* HFFormTitleTVC.m */; };
@@ -57,6 +59,12 @@
 		8F4E62501E95C50B005C461C /* HFFormHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormHelper.m; sourceTree = "<group>"; };
 		8F4E62521E95C798005C461C /* UIResponder+HFForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIResponder+HFForm.h"; sourceTree = "<group>"; };
 		8F4E62531E95C798005C461C /* UIResponder+HFForm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIResponder+HFForm.m"; sourceTree = "<group>"; };
+		8F63783D1ED43B8D005B73A6 /* HFFormCheckBoxTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormCheckBoxTVC.h; sourceTree = "<group>"; };
+		8F63783E1ED43B8D005B73A6 /* HFFormCheckBoxTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormCheckBoxTVC.m; sourceTree = "<group>"; };
+		8F63783F1ED43B8D005B73A6 /* HFFormTagsTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormTagsTVC.h; sourceTree = "<group>"; };
+		8F6378401ED43B8D005B73A6 /* HFFormTagsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormTagsTVC.m; sourceTree = "<group>"; };
+		8F6378431ED43E91005B73A6 /* HFFormOptionsInterModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormOptionsInterModel.h; sourceTree = "<group>"; };
+		8F6378441ED43E91005B73A6 /* HFFormOptionsInterModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormOptionsInterModel.m; sourceTree = "<group>"; };
 		8F7F5C121E95C032003FB2EE /* NSBundle+HFForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+HFForm.h"; sourceTree = "<group>"; };
 		8F7F5C131E95C032003FB2EE /* NSBundle+HFForm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+HFForm.m"; sourceTree = "<group>"; };
 		8F7F5C151E95C032003FB2EE /* HFFormAddSectionButtonTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormAddSectionButtonTVC.h; sourceTree = "<group>"; };
@@ -75,8 +83,6 @@
 		8F7F5C221E95C032003FB2EE /* HFFormOptionsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormOptionsTVC.m; sourceTree = "<group>"; };
 		8F7F5C231E95C032003FB2EE /* HFFormSubmitButtonTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormSubmitButtonTVC.h; sourceTree = "<group>"; };
 		8F7F5C241E95C032003FB2EE /* HFFormSubmitButtonTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormSubmitButtonTVC.m; sourceTree = "<group>"; };
-		8F7F5C251E95C032003FB2EE /* HFFormSupplementaryTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormSupplementaryTVC.h; sourceTree = "<group>"; };
-		8F7F5C261E95C032003FB2EE /* HFFormSupplementaryTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormSupplementaryTVC.m; sourceTree = "<group>"; };
 		8F7F5C271E95C032003FB2EE /* HFFormSwitchTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormSwitchTVC.h; sourceTree = "<group>"; };
 		8F7F5C281E95C032003FB2EE /* HFFormSwitchTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormSwitchTVC.m; sourceTree = "<group>"; };
 		8F7F5C291E95C032003FB2EE /* HFFormTextViewTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormTextViewTVC.h; sourceTree = "<group>"; };
@@ -187,8 +193,6 @@
 				8F7F5C221E95C032003FB2EE /* HFFormOptionsTVC.m */,
 				8F7F5C231E95C032003FB2EE /* HFFormSubmitButtonTVC.h */,
 				8F7F5C241E95C032003FB2EE /* HFFormSubmitButtonTVC.m */,
-				8F7F5C251E95C032003FB2EE /* HFFormSupplementaryTVC.h */,
-				8F7F5C261E95C032003FB2EE /* HFFormSupplementaryTVC.m */,
 				8F7F5C271E95C032003FB2EE /* HFFormSwitchTVC.h */,
 				8F7F5C281E95C032003FB2EE /* HFFormSwitchTVC.m */,
 				8F7F5C291E95C032003FB2EE /* HFFormTextViewTVC.h */,
@@ -197,6 +201,10 @@
 				8F7F5C2C1E95C032003FB2EE /* HFFormTitleTVC.m */,
 				8F7F5C2D1E95C032003FB2EE /* HFFromDatePickerTVC.h */,
 				8F7F5C2E1E95C032003FB2EE /* HFFromDatePickerTVC.m */,
+				8F63783D1ED43B8D005B73A6 /* HFFormCheckBoxTVC.h */,
+				8F63783E1ED43B8D005B73A6 /* HFFormCheckBoxTVC.m */,
+				8F63783F1ED43B8D005B73A6 /* HFFormTagsTVC.h */,
+				8F6378401ED43B8D005B73A6 /* HFFormTagsTVC.m */,
 			);
 			path = FormCell;
 			sourceTree = "<group>";
@@ -214,6 +222,8 @@
 				8F7F5C671E95C106003FB2EE /* HFFormAlbumModel.m */,
 				8F1206351E971F0F009F5E30 /* HFFormBasicModel.h */,
 				8F1206361E971F0F009F5E30 /* HFFormBasicModel.m */,
+				8F6378431ED43E91005B73A6 /* HFFormOptionsInterModel.h */,
+				8F6378441ED43E91005B73A6 /* HFFormOptionsInterModel.m */,
 			);
 			path = FormModel;
 			sourceTree = "<group>";
@@ -367,10 +377,11 @@
 				8F7F5C571E95C032003FB2EE /* HFFormAdaptor.m in Sources */,
 				8F7F5C581E95C032003FB2EE /* HFFormRowModel.m in Sources */,
 				8F7F5C5A1E95C032003FB2EE /* HFFormDatePicker.m in Sources */,
+				8F6378421ED43B8D005B73A6 /* HFFormTagsTVC.m in Sources */,
 				8F7F5C591E95C032003FB2EE /* HFFormSectionModel.m in Sources */,
-				8F7F5C521E95C032003FB2EE /* HFFormSupplementaryTVC.m in Sources */,
 				8F7F5C491E95C032003FB2EE /* NSBundle+HFForm.m in Sources */,
 				8F7F5C551E95C032003FB2EE /* HFFormTitleTVC.m in Sources */,
+				8F6378451ED43E91005B73A6 /* HFFormOptionsInterModel.m in Sources */,
 				8FBC60951E7944F500B06CD7 /* AppDelegate.m in Sources */,
 				8F7F5C5B1E95C032003FB2EE /* HFFormOptionsView.m in Sources */,
 				8F7F5C4E1E95C032003FB2EE /* HFFormDefaultTVC.m in Sources */,
@@ -391,6 +402,7 @@
 				8F7F5C5E1E95C032003FB2EE /* HFForm.m in Sources */,
 				8F7F5C4D1E95C032003FB2EE /* HFFormCustomTVC.m in Sources */,
 				8FBC60921E7944F500B06CD7 /* main.m in Sources */,
+				8F6378411ED43B8D005B73A6 /* HFFormCheckBoxTVC.m in Sources */,
 				8F7F5C541E95C032003FB2EE /* HFFormTextViewTVC.m in Sources */,
 				8FE9F7581E95CAAD001AFA60 /* NSString+HFForm.m in Sources */,
 				8F7F5C561E95C032003FB2EE /* HFFromDatePickerTVC.m in Sources */,

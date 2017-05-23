@@ -47,4 +47,9 @@
  */
 @property (nonatomic, copy) NSString *key;
 
+/**
+ 占位提示文字
+ */
+@property (nonatomic, copy) NSString *placeholder;
+
 @end

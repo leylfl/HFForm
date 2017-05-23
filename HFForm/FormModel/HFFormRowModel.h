@@ -6,7 +6,6 @@
 //  Copyright © 2017年 lifenglei. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "HFFormBasicModel.h"
 
@@ -21,12 +20,14 @@ typedef NS_ENUM(NSUInteger, HFFormRowType) {
     HFFormRowTypeOptions,       // 多选项
     HFFormRowTypeDatePicker,    // 日期选择器
     HFFormRowTypeSwitch,        // 选择开关
-    HFFormRowTypeText,          // 描述类的控件，比如看房描述，默认高度76，其他情况初始化的时候覆盖，不要在这里面改。一般不用改，内部自动计算的
-    HFFormRowTypeSupplementary, // 补充
+    HFFormRowTypeText,          // 描述类的控件，比如看房描述，默认高度自动计算，其他情况初始化的时候覆盖
     HFFormRowTypeJump,          // 跳转，默认高度74，其他情况初始化的时候覆盖，不要在这里面改
     HFFormRowTypeSubmit,        // 提交按钮
     HFFormRowTypeAddSection,    // 添加一个组
     HFFormRowTypeCustom,        // 自定义
+    HFFormRowTypeLocation,      // 定位
+    HFFormRowTypeCheckBox,      // 复选框
+    HFFormRowTypeTags,          // 标签类
     HFFormRowTypeUnknow
 };
 
@@ -43,6 +44,7 @@ typedef NS_ENUM(NSUInteger, HFFormRefreshType) {
 
 typedef void(^HFFormRowValueChangedHandler)(id value);
 typedef void(^HFFormRowReloadHandler)(HFFormRefreshType type);
+typedef void(^HFFormRowValueInvalidHandler)();
 typedef NSArray <HFFormRowModel *>*(^HFFormRowValueSubRowsHandler)();
 typedef NSError *(^HFFormRowCheckHandler)(HFFormRowModel *row);
 typedef NSDictionary *(^HFFormRowSettingHandler)();
@@ -67,14 +69,14 @@ typedef NSString *(^HFFormRowTitleHandler)();
 @property (nonatomic, copy) NSString *subfix;
 
 /**
- 占位提示文字
- */
-@property (nonatomic, copy) NSString *placeholder;
-
-/**
  键盘类型
  */
 @property (nonatomic, assign) UIKeyboardType keyboardType;
+
+/**
+ 输入字符数量的限制
+ */
+@property (nonatomic, assign) unsigned int numberOfLimit;
 
 /**
  row的类型
@@ -153,6 +155,11 @@ typedef NSString *(^HFFormRowTitleHandler)();
  */
 @property (nonatomic, copy) HFFormRowCheckHandler checkHandler;
 
+/**
+ 校验不合格的回调
+ # checkHandler给出判断规则后，校验不通过会触发这个回调
+ */
+@property (nonatomic, copy) HFFormRowValueInvalidHandler invalidHandler;
 
 #pragma mark - 一般用于多选项PickerView
 
@@ -171,18 +178,37 @@ typedef NSString *(^HFFormRowTitleHandler)();
  多选项pickerview里面数据对应的value值
  # 有时候我们从服务器取到数据转成模型后，再给pickerview，通过这个属性来取对应的value值
  */
-@property (nonatomic, copy) NSString *displayValue;
+@property (nonatomic, copy) NSString *valueKey;
 
 /**
  多选项pickerview里面数据对应的id值
  # 有时候我们从服务器取到数据转成模型后，再给pickerview，通过这个属性来取对应的id值
  */
-@property (nonatomic, copy) NSString *displayID;
+@property (nonatomic, copy) NSString *idKey;
+
+
+/**
+ 多选项pickerview里面数据默认停在哪一行，业务复杂啊
+ # 格式：填入比如@"1"即可，注意是从0开始的，即第一行是0
+ */
+@property (nonatomic ,strong) NSNumber *defaultSelectRow;
+
+
+/**
+ 选择的选择项不能小于某个哪行
+ */
+@property (nonatomic, strong) NSNumber *miniSelect;
+
+
+/**
+ 小于最小行后给出的提示
+ */
+@property (nonatomic, strong) NSString *miniSelectError;
 
 
 /**
  追加配置
-
+ 
  @param dict 配置
  */
 - (void)appendSettings:(NSDictionary *)dict;
