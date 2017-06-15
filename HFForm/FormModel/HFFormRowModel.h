@@ -10,6 +10,20 @@
 #import "HFFormBasicModel.h"
 
 /**
+ 表单的刷新控件
+ 
+ - HFFormRefreshModeRefresh: 上啦刷新
+ - HFFormRefreshModeLoadMore: 下拉加载更多
+ - HFFormRefreshModeNone: 不需要刷新控件
+ */
+typedef NS_OPTIONS(NSUInteger, HFFormRefreshMode) {
+    HFFormRefreshModeRefresh            = 0x100 << 1,
+    HFFormRefreshModeLoadMore           = 0x100 << 2,
+    HFFormRefreshModeLoadMoreManual     = 0x100 << 3,
+    HFFormRefreshModeNone               = 0x100 << 4
+};
+
+/**
  row的样式
  # 提供了默认的几个样式
  */
@@ -28,6 +42,7 @@ typedef NS_ENUM(NSUInteger, HFFormRowType) {
     HFFormRowTypeLocation,      // 定位
     HFFormRowTypeCheckBox,      // 复选框
     HFFormRowTypeTags,          // 标签类
+    HFFormRowTypeLoading,       // 刷新框架里面的显示加载的
     HFFormRowTypeUnknow
 };
 
@@ -204,6 +219,12 @@ typedef NSString *(^HFFormRowTitleHandler)();
  小于最小行后给出的提示
  */
 @property (nonatomic, strong) NSString *miniSelectError;
+
+/**
+ optjions的格式
+ # 比如您有三列数据，三列数据需要进行展示的格式2012年12月12日，这里就可以写成%@年%@月%@日
+ */
+@property (nonatomic, copy) NSString *formatter;
 
 
 /**

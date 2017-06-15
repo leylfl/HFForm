@@ -34,7 +34,7 @@
 
 
 /**
- 表单被选中后的促发
+ 表单被选中后的触发
  
  @param form 表单
  @param indexPath 位置
@@ -42,6 +42,16 @@
  @param cell cell
  */
 - (void)form:(HFForm * _Nonnull)form didSelectRowAtIndexPath:(NSIndexPath * _Nonnull)indexPath rowModel:(HFFormRowModel * _Nonnull)row tableViewCell:(UITableViewCell * _Nullable)cell;
+
+/**
+ 表单取消选中后的触发
+ 
+ @param form 表单
+ @param indexPath 位置
+ @param row 模型
+ @param cell cell
+ */
+- (void)form:(HFForm * _Nonnull)form didDeselectRowAtIndexPath:(NSIndexPath * _Nonnull)indexPath rowModel:(HFFormRowModel * _Nonnull)row tableViewCell:(UITableViewCell * _Nullable)cell;
 
 /**
  row初始化的时候被触发
@@ -53,6 +63,15 @@
  @param cell cell
  */
 - (void)form:(HFForm * _Nonnull)form setRowAtIndexPath:(NSIndexPath * _Nonnull)indexPath rowModel:(HFFormRowModel * _Nonnull)row tableViewCell:(UITableViewCell * _Nullable)cell;
+
+
+/**
+ 是否表单还有更多数据
+ # 一般在开启加载更多的功能时
+ 
+ @return 是否有更多数据
+ */
+- (BOOL)hasMoreDataInform;
 
 @end
 
@@ -123,14 +142,14 @@
  @param key section的key
  @return section模型
  */
-- (HFFormSectionModel * _Nullable)obtainSectionWithKey:(NSString * _Nonnull)key;
+- (HFFormSectionModel * _Nullable)getSectionWithKey:(NSString * _Nonnull)key;
 
 /**
  获取所有的row模型
  
  @return 装有所有row模型的数组
  */
-- (NSArray * _Nullable)obtainAllRows;
+- (NSArray * _Nullable)getAllRows;
 
 /**
  根据key查找一个或多个row模型
@@ -138,7 +157,7 @@
  @param key row的key
  @return 装有所查找到的row的数组
  */
-- (NSArray * _Nullable)obtainRowWithKey:(NSString * _Nonnull)key;
+- (NSArray * _Nullable)getRowWithKey:(NSString * _Nonnull)key;
 
 /**
  往已有的表单中添加section数据
@@ -175,6 +194,14 @@
  @param lastRow 要往表单中的哪个row下面进行插入操作
  */
 - (void)appendRows:(NSArray <HFFormRowModel *> *_Nonnull)rows below:(HFFormRowModel *_Nonnull)lastRow;
+
+/**
+ 往表单的某个组(section模型)下面插入一个row模型
+ 
+ @param row row模型
+ @param section 要插入的组
+ */
+- (void)appendRow:(HFFormRowModel * _Nonnull)row inSection:(HFFormSectionModel * _Nonnull)section;
 
 /**
  往表单的某个组(section模型)下面插入一个或者多个row模型
@@ -262,7 +289,7 @@
  
  @return 组的数量
  */
-- (NSUInteger)obtainSectionCount;
+- (NSUInteger)totalSectionCount;
 
 /**
  表单是否包含某个row模型
@@ -287,7 +314,7 @@
 /**
  刷新表单多个row
  
- @param row 需要被刷新的row
+ @param rows 需要被刷新的row
  */
 - (void)reloadRows:(NSArray <HFFormRowModel *> * _Nonnull)rows;
 
@@ -346,5 +373,10 @@
  @return 检验通过或者检验没有通过
  */
 - (BOOL)checkRowFinished;
+
+/**
+ 清空数据
+ */
+- (void)clearData;
 
 @end

@@ -9,6 +9,23 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 
+@interface ZMHFFormNavController : UINavigationController
+@end
+@implementation ZMHFFormNavController
+- (BOOL)shouldAutorotate {
+    return YES;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskPortrait;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation {
+    return UIInterfaceOrientationPortrait;
+}
+
+@end
+
 @interface AppDelegate ()
 
 @end
@@ -17,10 +34,10 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    ZMHFFormNavController *nav = [[ZMHFFormNavController alloc] initWithRootViewController:[[ViewController alloc] init]];
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor whiteColor];
-    self.window.rootViewController = [[ViewController alloc] init];
+    self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     return YES;
 }

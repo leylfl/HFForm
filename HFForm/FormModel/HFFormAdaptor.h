@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@class HFFormRowModel, HFFormSectionModel;
+#import "HFFormRowModel.h"
+#import "HFFormSectionModel.h"
 
 @protocol HFFormAdaptorDelegate <NSObject>
 
@@ -18,13 +19,19 @@
 
 - (void)setRowAtIndexPath:(NSIndexPath * _Nullable)indexPath rowModel:(HFFormRowModel * _Nullable)row tableViewCell:(UITableViewCell * _Nullable)cell;
 
+- (void)didDeselectRowAtIndexPath:(NSIndexPath * _Nullable)indexPath rowModel:(HFFormRowModel * _Nullable)row tableViewCell:(UITableViewCell * _Nullable)cell;
+
+- (BOOL)hasMoreData;
+
 @end
 
 @interface HFFormAdaptor : NSObject<UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, strong, nonnull) UITableView *tablebView;
+@property (nonatomic, strong, nonnull) UITableView *tableView;
 @property (nonatomic, strong, nonnull) NSMutableArray<HFFormSectionModel *> *datas;
 @property (nonatomic, weak, nullable) id<HFFormAdaptorDelegate> delegate;
+@property (nonatomic, assign) HFFormRefreshMode refreshMode;
+@property (nonatomic, assign) BOOL isRefreshingData;
 
 - (void)insertSection:(NSIndexSet * _Nonnull)index;
 

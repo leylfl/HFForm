@@ -14,5 +14,7 @@
 + (instancetype)formBundle;
 + (UIImage *)albumPlaceholderImage;
 + (UIImage *)questionTipImage;
++ (UIImage *)loadingCircleImage;
++ (UIImage *)loadAppleImage;
 
 @end

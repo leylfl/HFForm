@@ -11,6 +11,8 @@
 #import "HFFormHelper.h"
 #import "UIResponder+HFForm.h"
 
+#import "HFFormRefresh.h"
+
 #if DEBUG
 #import "HFormOptimizeInfo.h"
 #endif
@@ -27,11 +29,14 @@
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     
+    self.tableView.top = 64;
     self.tableView.height = APP_Height - 44;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.automaticallyAdjustsScrollViewInsets = NO;
     
     self.form = [[HFForm alloc] init];
     self.form.delegate = self;
@@ -42,11 +47,13 @@
     self.tableView.showsVerticalScrollIndicator = NO;
     self.tableView.delegate         = self.form.adpator;
     self.tableView.dataSource       = self.form.adpator;
-    self.form.adpator.tablebView    = self.tableView;
+    self.form.adpator.tableView    = self.tableView;
     [self.view addSubview:self.tableView];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+    self.refreshMode = HFFormRefreshModeNone;
     
 #if DEBUG
     [HFormOptimizeInfo show];
@@ -60,8 +67,53 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)setRefreshMode:(HFFormRefreshMode)refreshMode {
+    _refreshMode = refreshMode;
+    
+    self.form.adpator.refreshMode = refreshMode;
+    
+    if (refreshMode & HFFormRefreshModeRefresh) {
+        [self.tableView addTarget:self refreshForSelector:@selector(refreshData)];
+    }
+    
+    if (refreshMode & HFFormRefreshModeLoadMore) {
+        [self.tableView addTarget:self loadMoreForSelector:@selector(loadMoreData)];
+    }
+    
+    if ((refreshMode & HFFormRefreshModeRefresh) && [self.form totalSectionCount] == 0) {
+        HFFormRowModel *row = [HFForm rowWithType:HFFormRowTypeLoading];
+        [self.form appendRow:row];
+        
+        [self.form reloadData];
+    }
+}
+
+- (void)refreshData {
+    [self formRefreshData];
+}
+
+- (void)loadMoreData {
+    [self formLoadMoreData];
+}
+
 - (void)panAction:(UIGestureRecognizer *)recognnizer {
     [self.tableView endEditing:YES];
+}
+
+#pragma mark - Public Method
+- (void)formRefreshData {
+}
+
+- (void)formLoadMoreData {
+    
+}
+
+- (BOOL)needLoadMoreData {
+    return NO;
+}
+
+- (void)endLoadData {
+    [self.tableView reset];
 }
 
 - (void)keyboardWillShow:(NSNotification *)notification {

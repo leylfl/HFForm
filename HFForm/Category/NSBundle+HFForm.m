@@ -28,4 +28,14 @@
     return [UIImage imageWithContentsOfFile:[[self formBundle] pathForResource:pngName ofType:@"png"]];
 }
 
++ (UIImage *)loadingCircleImage {
+    NSString *pngName = [NSString stringWithFormat:@"icon_loading@%ldx",(long)[UIScreen mainScreen].scale];
+    return [UIImage imageWithContentsOfFile:[[self formBundle] pathForResource:pngName ofType:@"png"]];
+}
+
++ (UIImage *)loadAppleImage {
+    NSString *pngName = [NSString stringWithFormat:@"apple@%ldx",(long)[UIScreen mainScreen].scale];
+    return [UIImage imageWithContentsOfFile:[[self formBundle] pathForResource:pngName ofType:@"png"]];
+}
+
 @end

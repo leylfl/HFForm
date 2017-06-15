@@ -348,8 +348,8 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info {
         _deleButton.alpha = 0.7;
         _deleButton.clipsToBounds = YES;
         _deleButton.layer.cornerRadius = 8.f;
-        _deleButton.titleLabel.font = [UIFont systemFontOfSize:12];
-        [_deleButton setTitle:@"删" forState:UIControlStateNormal];
+        _deleButton.titleLabel.font = [UIFont fontWithName:@"iconfont" size:12];;
+        [_deleButton setTitle:@"\U0000e86e" forState:UIControlStateNormal];
         [_deleButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
         [_deleButton addTarget:self action:@selector(delePhoto) forControlEvents:UIControlEventTouchUpInside];
         

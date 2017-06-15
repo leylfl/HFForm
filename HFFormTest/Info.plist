@@ -36,5 +36,9 @@
 	<string>请点“好”允许访问</string>
 	<key>NSCameraUsageDescription</key>
 	<string>请点“好”允许访问</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>iconfont.ttf</string>
+	</array>
 </dict>
 </plist>

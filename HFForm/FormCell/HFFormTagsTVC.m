@@ -67,8 +67,8 @@
     
     if (button.selected) {
         button.titleLabel.font = [UIFont boldSystemFontOfSize:14];
-        button.layer.borderColor = UIColorFromRGB(0x6281c2).CGColor;
-        [button setTitleColor:UIColorFromRGB(0x6281c2) forState:UIControlStateNormal];
+        button.layer.borderColor = [UIColor orangeColor].CGColor;
+        [button setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
         [_datas addObject:model.optionID];
     }else{
         button.titleLabel.font = [UIFont systemFontOfSize:14];
@@ -79,6 +79,7 @@
         }
     }
     if(_datas.count > 0) self.row.value = [_datas componentsJoinedByString:@","];
+    else if(self.row.value && _datas.count == 0) self.row.value = nil;
 }
 
 - (void)tipClick {

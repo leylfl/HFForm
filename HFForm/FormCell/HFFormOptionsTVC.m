@@ -109,7 +109,21 @@
         }
     }
     if (array.count > 0) {
-        self.row.content = [array componentsJoinedByString:@" "];
+        if (row.formatter) {
+            NSString *formatter = row.formatter;
+            if (array.count == 1) {
+                self.row.content = [NSString stringWithFormat:formatter, array[0]];
+            }else if(array.count == 2) {
+                self.row.content = [NSString stringWithFormat:formatter, array[0], array[1]];
+            }else if (array.count == 3) {
+                self.row.content = [NSString stringWithFormat:formatter, array[0], array[1], array[2]];
+            }else if (array.count == 4) {
+                self.row.content = [NSString stringWithFormat:formatter, array[0], array[1], array[2], array[3]];
+            }
+            
+        }else{
+            self.row.content = [array componentsJoinedByString:@" "];
+        }
         _contentLabel.textColor = UIColorFromRGB(0x222222);
         switch (self.type) {
             case HFFormOptionsTypeNormal:{
@@ -146,7 +160,21 @@
     }
     
     if(values.count > 0) {
-        self.row.content = [values componentsJoinedByString:@" "];
+        if (self.row.formatter) {
+            NSString *formatter = [self.row.formatter stringByReplacingOccurrencesOfString:@"AA" withString:@"%@"];
+            if (values.count == 1) {
+                self.row.content = [NSString stringWithFormat:formatter, values[0]];
+            }else if(values.count == 2) {
+                self.row.content = [NSString stringWithFormat:formatter, values[0], values[1]];
+            }else if (values.count == 3) {
+                self.row.content = [NSString stringWithFormat:formatter, values[0], values[1], values[2]];
+            }else if (values.count == 4) {
+                self.row.content = [NSString stringWithFormat:formatter, values[0], values[1], values[2], values[3]];
+            }
+            
+        }else{
+            self.row.content = [values componentsJoinedByString:@" "];
+        }
         _contentLabel.textColor = UIColorFromRGB(0x222222);
         switch (self.type) {
             case HFFormOptionsTypeNormal:{

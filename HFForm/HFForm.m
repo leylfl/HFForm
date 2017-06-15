@@ -22,10 +22,13 @@
 #import "HFFormTextViewTVC.h"
 #import "HFFormCheckBoxTVC.h"
 #import "HFFormTagsTVC.h"
+#import "HFFormRefreshLoadingCell.h"
 
 #import "HFFormAlbumModel.h"
 
 #import <objc/runtime.h>
+
+#import "HFFormHelper.h"
 
 typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     HFFormPropertyTypeLiterals = 0, // 字面量
@@ -41,6 +44,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 @interface HFForm()<HFFormAdaptorDelegate>
 
 @property (nonatomic, strong) NSMutableArray <HFFormSectionModel *>*datas;
+@property (nonatomic, strong) NSMutableArray <HFFormSectionModel *>*backupDatas;
 
 @property (nonatomic, strong) NSObject *originalModel;
 
@@ -48,6 +52,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 
 @implementation HFForm {
     dispatch_semaphore_t _lock;
+    BOOL _formFinished; // 表单构建完成过
 }
 
 #pragma mark - Public Method
@@ -159,6 +164,11 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
             row.cell    = [HFFormAddSectionButtonTVC class];
         }break;
             
+        case HFFormRowTypeLoading :{
+            row.height = 44;
+            row.cell   = [HFFormRefreshLoadingCell class];
+        }break;
+            
         default:
             break;
     }
@@ -181,16 +191,22 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     
     [self.datas insertObject:section atIndex:index];
     
-    [self.adpator insertSection:[NSIndexSet indexSetWithIndex:index]];
+    if(_formFinished) [self.adpator insertSection:[NSIndexSet indexSetWithIndex:index]];
 }
 
 - (void)appendRow:(HFFormRowModel * _Nonnull)row {
     NSAssert(self.datas.count <= 1, @"请使用appendRow:inSection方法，本方法只适用于一个section的情况");
     
-    HFFormSectionModel *section = self.datas.count == 1 ? self.datas.firstObject : [self.class section];
-    [section appendRow:row];
-    [self _reConfigRow:row];
-    if (self.datas.count == 0) [self.datas addObject:section];
+    if ([self _isRefreshingData]) {
+        HFFormSectionModel *section = self.backupDatas.count == 1 ? self.backupDatas.firstObject : [self.class section];;
+        [section appendRow:row];
+        if (self.backupDatas.count == 0) [self.backupDatas addObject:section];
+    }else{
+        HFFormSectionModel *section = self.datas.count == 1 ? self.datas.firstObject : [self.class section];
+        [section appendRow:row];
+        [self _reConfigRow:row];
+        if (self.datas.count == 0) [self.datas addObject:section];
+    }
 }
 
 - (void)appendRows:(NSArray <HFFormRowModel *> *_Nonnull)rows below:(HFFormRowModel *_Nonnull)lastRow {
@@ -206,7 +222,33 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         [indexs addObject: [NSIndexPath indexPathForRow:pos inSection:0]];
     }
     
-    [self.adpator insertRows:indexs];
+    if(_formFinished) [self.adpator insertRows:indexs];
+}
+
+- (void)appendRow:(HFFormRowModel * _Nonnull)row inSection:(HFFormSectionModel * _Nonnull)section {
+    [self _reConfigRow:row];
+    if([self _isRefreshingData]) {
+        NSInteger idx = [self.datas indexOfObject:section] != NSIntegerMax ? [self.datas indexOfObject:section] : 0;
+        if (self.backupDatas.count == 0) {
+            NSArray *array = self.datas;
+            
+            HFFormSectionModel *section = [self.class section];
+            [section appendRow:row];
+            
+            [self.backupDatas addObjectsFromArray:array];
+            [self.backupDatas replaceObjectAtIndex:idx withObject:section];
+            
+        }else{
+            HFFormSectionModel *section = self.backupDatas[idx];
+            [section appendRow:row];
+        }
+        
+    }else{
+        [section appendRow:row];
+        NSMutableArray *indexs = @[].mutableCopy;
+        [indexs addObject:[NSIndexPath indexPathForRow:section.rows.count - 1 inSection:[self _indexOfSection:section]]];
+        if(_formFinished) [self.adpator insertRows:indexs];
+    }
 }
 
 - (void)appendRows:(NSArray <HFFormRowModel *> * _Nonnull)rows inSection:(HFFormSectionModel * _Nonnull)section {
@@ -218,7 +260,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         
         [indexs addObject:[NSIndexPath indexPathForRow:section.rows.count - 1 inSection:[self _indexOfSection:section]]];
     }
-    [self.adpator insertRows:indexs];
+    if(_formFinished) [self.adpator insertRows:indexs];
 }
 
 - (void)appendRows:(NSArray <HFFormRowModel *> * _Nonnull)rows inSection:(HFFormSectionModel * _Nonnull)section rowAtSection:(NSUInteger)index {
@@ -230,7 +272,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         
         [indexs addObject:[NSIndexPath indexPathForRow:index + idx inSection:[self _indexOfSection:section]]];
     }
-    [self.adpator insertRows:indexs];
+    if(_formFinished) [self.adpator insertRows:indexs];
 }
 
 - (HFFormSectionModel * _Nonnull)sectionOfIndex:(NSUInteger)index {
@@ -243,7 +285,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     return section.rows[index];
 }
 
-- (HFFormSectionModel *)obtainSectionWithKey:(NSString * _Nonnull)key {
+- (HFFormSectionModel *)getSectionWithKey:(NSString * _Nonnull)key {
     HFFormSectionModel *section;
     for (HFFormSectionModel *model in self.datas) {
         if ([section.key isEqualToString:key]) {
@@ -254,7 +296,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     return section;
 }
 
-- (NSArray *)obtainRowWithKey:(NSString * _Nonnull)key {
+- (NSArray *)getRowWithKey:(NSString * _Nonnull)key {
     __block NSMutableArray *array = @[].mutableCopy;
     [self.datas enumerateObjectsUsingBlock:^(HFFormSectionModel * _Nonnull section, NSUInteger idx, BOOL * _Nonnull stop) {
         for (HFFormRowModel *model in section.rows) {
@@ -273,8 +315,8 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     return array;
 }
 
-- (NSArray * _Nullable)obtainAllRows {
-    return [self _obtainAllRows];
+- (NSArray * _Nullable)getAllRows {
+    return [self _getAllRows];
 }
 
 - (void)deleteSections:(NSArray <HFFormSectionModel *> * _Nonnull)sections {
@@ -288,7 +330,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 }
 
 - (void)deleteSectionWithKey:(NSString * _Nonnull)key {
-    HFFormSectionModel *section = [self obtainSectionWithKey:key];
+    HFFormSectionModel *section = [self getSectionWithKey:key];
     if (section) {
         [self.adpator deleteSection:[NSIndexSet indexSetWithIndex:[self _indexOfSection:section]]];
         [self.datas removeObject:section];
@@ -337,7 +379,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
         for (HFFormRowModel *model in section.rows) {
             if ([model.key isEqualToString:key]) {
                 [section deleteRow:model];
-                [self.adpator deleteRow:[self _obtainIndexWithRow:model]];
+                [self.adpator deleteRow:[self _getIndexWithRow:model]];
                 break;
                 *stop = YES;
             }
@@ -345,7 +387,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     }];
 }
 
-- (NSUInteger)obtainSectionCount {
+- (NSUInteger)totalSectionCount {
     return self.datas.count;
 }
 
@@ -364,18 +406,26 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
 }
 
 - (void)reloadData {
-    if (self.datas.count == 0) return;
+    if (self.adpator.refreshMode & HFFormRefreshModeRefresh) [self _checkLoadingCell];
+    if ([self _isRefreshingData]) {
+        NSArray *datas = self.backupDatas;
+        [self.datas removeAllObjects];
+        [self.datas addObjectsFromArray:datas];
+        [self.backupDatas removeAllObjects];
+    }
     self.adpator.datas = self.datas;
+    if(self.datas.count > 0) _formFinished = YES;
+    else _formFinished = NO;
 }
 
 - (void)reloadRow:(HFFormRowModel * _Nonnull)row {
-    [self.adpator reloadRow:[self _obtainIndexWithRow:row]];
+    [self.adpator reloadRow:[self _getIndexWithRow:row]];
 }
 
 - (void)reloadRows:(NSArray <HFFormRowModel *> * _Nonnull)rows {
     NSMutableArray *indexPaths = @[].mutableCopy;
     for (HFFormRowModel *row in rows) {
-        NSIndexPath *indexPath = [self _obtainIndexWithRow:row];
+        NSIndexPath *indexPath = [self _getIndexWithRow:row];
         if(indexPath) [indexPaths addObject:indexPath];
     }
     if(indexPaths.count > 0) [self.adpator reloadRows:indexPaths];
@@ -428,7 +478,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
             objc_property_t property  = properties[idx];
             NSString *name = [NSString stringWithUTF8String:property_getName(property)];
             id value = [obj valueForKey:name];
-            NSArray *rows = [self _obtainAllRows];
+            NSArray *rows = [self _getAllRows];
             for (HFFormRowModel *row in rows) {
                 if ([row.key isEqualToString:name]) {
                     if(row.value) {
@@ -530,7 +580,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
                 objc_property_t property  = properties[idx];
                 NSString *name = [NSString stringWithUTF8String:property_getName(property)];
                 id value = [obj valueForKey:name];
-                NSArray *rows = [self _obtainAllRows];
+                NSArray *rows = [self _getAllRows];
                 for (HFFormRowModel *row in rows) {
                     NSString *key = row.key;
                     if ([key isEqualToString:name]) {
@@ -614,6 +664,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
                 
                 if (!row.value) {
                     if(row.invalidHandler) row.invalidHandler();
+                    
                     if (row.type == HFFormRowTypeDefault || row.type == HFFormRowTypeText) {
                         [HFFormHelper showNotice:[NSString stringWithFormat:@"请输入%@", row.title]];
                     }else{
@@ -666,10 +717,27 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     }
 }
 
+- (void)didDeselectRowAtIndexPath:(NSIndexPath *)indexPath rowModel:(HFFormRowModel *)row tableViewCell:(UITableViewCell *)cell {
+    if ([self.delegate respondsToSelector:@selector(form:didDeselectRowAtIndexPath:rowModel:tableViewCell:)]) {
+        [self.delegate form:self didDeselectRowAtIndexPath:indexPath rowModel:row tableViewCell:cell];
+    }
+}
+
 - (void)setRowAtIndexPath:(NSIndexPath *)indexPath rowModel:(HFFormRowModel *)row tableViewCell:(UITableViewCell *)cell {
     if ([self.delegate respondsToSelector:@selector(form:setRowAtIndexPath:rowModel:tableViewCell:)]) {
         [self.delegate form:self setRowAtIndexPath:indexPath rowModel:row tableViewCell:cell];
     }
+}
+
+- (BOOL)hasMoreData {
+    if ([self.delegate respondsToSelector:@selector(hasMoreDataInform)]) {
+        return [self.delegate hasMoreDataInform];
+    }
+    return NO;
+}
+
+- (void)clearData {
+    [self.datas removeAllObjects];
 }
 
 #pragma mark - Initialize
@@ -694,7 +762,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     return [section.rows indexOfObject:row];
 }
 
-- (NSIndexPath *)_obtainIndexWithRow:(HFFormRowModel * _Nonnull)row {
+- (NSIndexPath *)_getIndexWithRow:(HFFormRowModel * _Nonnull)row {
     __block NSIndexPath *indexPath = nil;
     [self.datas enumerateObjectsUsingBlock:^(HFFormSectionModel * _Nonnull model, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([model.rows containsObject:row]) {
@@ -719,7 +787,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     };
 }
 
-- (NSArray *)_obtainAllRows {
+- (NSArray *)_getAllRows {
     NSMutableArray *rows = @[].mutableCopy;
     for (HFFormSectionModel *section in self.datas) {
         for (HFFormRowModel *row in section.rows) {
@@ -767,7 +835,7 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     BOOL change = NO;
     if ([model isKindOfClass:[NSObject class]]) {
         NSObject *aModel = (NSObject *)model;
-        NSArray *rows = [self _obtainAllRows];
+        NSArray *rows = [self _getAllRows];
         unsigned int outCount;
         objc_property_t *properties = class_copyPropertyList([aModel class], &outCount);
         for (HFFormRowModel *row in rows) {
@@ -943,6 +1011,39 @@ typedef NS_ENUM(NSUInteger, HFFormPropertyType) {
     }
     
     return array;
+}
+
+- (void)_checkLoadingCell {
+    if(self.datas.count  == 0) return;
+    
+    HFFormSectionModel *section = self.datas[0];
+    if (self.datas.count > 1) {
+        if (section.rows.count == 1) {
+            HFFormRowModel *row = section.rows.firstObject;
+            if (row && row.type == HFFormRowTypeLoading) {
+                [self.datas removeObject:section];
+            }
+        }
+    }else{
+        if (section.rows.count > 1) {
+            HFFormRowModel *row = section.rows.firstObject;
+            if (row && row.type == HFFormRowTypeLoading) {
+                [self.datas[0] deleteRow:row];
+            }
+        }
+    }
+}
+
+- (BOOL)_isRefreshingData {
+    return self.adpator.isRefreshingData;
+}
+
+#pragma mark - Lazy Method
+- (NSMutableArray <HFFormSectionModel *>*)backupDatas {
+    if (!_backupDatas) {
+        _backupDatas = @[].mutableCopy;
+    }
+    return _backupDatas;
 }
 
 @end

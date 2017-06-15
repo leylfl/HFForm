@@ -7,11 +7,16 @@
 //
 
 #import "HFFormAdaptor.h"
-#import "HFFormRowModel.h"
-#import "HFFormSectionModel.h"
 #import "HFFormBasicTableViewCell.h"
+#import "HFFormRefreshBaseView.h"
+
+#import "UIScrollView+HFFormRefresh.h"
+
+#import "HFFormRefreshEndTipView.h"
 
 @interface HFFormAdaptor()
+
+@property (nonatomic, strong) HFFormRefreshEndTipView *tipView;
 
 @end
 
@@ -21,14 +26,26 @@
     if(datas == nil || datas.count == 0) return;
     _datas = datas;
     
-    [self.tablebView reloadData];
+    [self.tableView reloadData];
+}
+
+- (void)setRefreshMode:(HFFormRefreshMode)refreshMode {
+    _refreshMode = refreshMode;
+    
+    if (refreshMode & HFFormRefreshModeRefresh) {
+        self.tableView.refreshEnable = YES;
+    }
+    
+    if (refreshMode & HFFormRefreshModeLoadMore || refreshMode & HFFormRefreshModeLoadMoreManual) {
+        self.tableView.loadMoreEnable = YES;
+    }
 }
 
 #pragma mark - Public Method
 - (void)insertSection:(NSIndexSet * _Nonnull)index {
-    [self.tablebView beginUpdates];
-    [self.tablebView insertSections:index withRowAnimation:UITableViewRowAnimationFade];
-    [self.tablebView endUpdates];
+    [self.tableView beginUpdates];
+    [self.tableView insertSections:index withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView endUpdates];
 }
 
 - (void)insertRow:(NSIndexPath * _Nonnull)indexPath {
@@ -36,9 +53,9 @@
 }
 
 - (void)insertRows:(NSArray <NSIndexPath *>* _Nonnull)indexPaths {
-    [self.tablebView beginUpdates];
-    [self.tablebView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
-    [self.tablebView endUpdates];
+    [self.tableView beginUpdates];
+    [self.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView endUpdates];
 }
 
 - (void)reloadRow:(NSIndexPath * _Nonnull)indexPath {
@@ -46,20 +63,20 @@
 }
 
 - (void)reloadRows:(NSArray <NSIndexPath *>* _Nonnull)indexPaths {
-    [self.tablebView beginUpdates];
-    [self.tablebView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
-    [self.tablebView endUpdates];
+    [self.tableView beginUpdates];
+    [self.tableView reloadRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView endUpdates];
 }
 
 - (void)reloadHeight{
-    [self.tablebView beginUpdates];
-    [self.tablebView endUpdates];
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
 }
 
 - (void)deleteSection:(NSIndexSet * _Nonnull)index {
-    [self.tablebView beginUpdates];
-    [self.tablebView deleteSections:index withRowAnimation:UITableViewRowAnimationFade];
-    [self.tablebView endUpdates];
+    [self.tableView beginUpdates];
+    [self.tableView deleteSections:index withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView endUpdates];
 }
 
 - (void)deleteRow:(NSIndexPath * _Nonnull)indexPath {
@@ -67,9 +84,9 @@
 }
 
 - (void)deleteRows:(NSArray <NSIndexPath *>* _Nonnull)indexPaths {
-    [self.tablebView beginUpdates];
-    [self.tablebView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
-    [self.tablebView endUpdates];
+    [self.tableView beginUpdates];
+    [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView endUpdates];
 }
 
 #pragma mark - TableView Delegate & TableView DataSource
@@ -117,6 +134,33 @@
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.refreshMode & HFFormRefreshModeLoadMore || self.refreshMode & HFFormRefreshModeLoadMoreManual) {
+        HFFormRowModel *row = [self captureRowModelWithIndexPath:indexPath];
+        if (row.type == HFFormRowTypeLoading) {
+            return;
+        }
+        if ([self.delegate respondsToSelector:@selector(hasMoreData)]) {
+            if([self.delegate hasMoreData]){
+                tableView.tableFooterView = nil;
+                tableView.footerView.hidden = NO;
+                
+                if(self.refreshMode & HFFormRefreshModeLoadMoreManual) return;
+                
+                if (indexPath.section == self.datas.count - 1) {
+                    // 还有4个cell的时候加载更多
+                    if (indexPath.row > self.datas[indexPath.section].rows.count - 4) {
+                        [tableView.footerView beginLoadMore];
+                    }
+                }
+            }else{
+                tableView.tableFooterView = self.tipView;
+                tableView.footerView.hidden = YES;
+            }
+        }
+    }
+}
+
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     return self.datas[section].headerView;
 }
@@ -143,7 +187,7 @@
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    [self.tablebView endEditing:YES];
+    [self.tableView endEditing:YES];
 }
 
 
@@ -154,5 +198,11 @@
 }
 
 #pragma mark - Lazy Method
+- (HFFormRefreshEndTipView *)tipView {
+    if (!_tipView) {
+        _tipView = [[HFFormRefreshEndTipView alloc] init];
+    }
+    return _tipView;
+}
 
 @end

@@ -14,6 +14,13 @@
 		8F6378411ED43B8D005B73A6 /* HFFormCheckBoxTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F63783E1ED43B8D005B73A6 /* HFFormCheckBoxTVC.m */; };
 		8F6378421ED43B8D005B73A6 /* HFFormTagsTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6378401ED43B8D005B73A6 /* HFFormTagsTVC.m */; };
 		8F6378451ED43E91005B73A6 /* HFFormOptionsInterModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F6378441ED43E91005B73A6 /* HFFormOptionsInterModel.m */; };
+		8F7CE54F1EF241B5001F5B4C /* HFFormRefreshBaseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7CE5481EF241B5001F5B4C /* HFFormRefreshBaseView.m */; };
+		8F7CE5501EF241B5001F5B4C /* HFFormRefreshFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7CE54A1EF241B5001F5B4C /* HFFormRefreshFooterView.m */; };
+		8F7CE5511EF241B5001F5B4C /* HFFormRefreshHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7CE54C1EF241B5001F5B4C /* HFFormRefreshHeaderView.m */; };
+		8F7CE5521EF241B5001F5B4C /* UIScrollView+HFFormRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7CE54E1EF241B5001F5B4C /* UIScrollView+HFFormRefresh.m */; };
+		8F7CE5551EF24469001F5B4C /* HFFormRefreshEndTipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7CE5541EF24469001F5B4C /* HFFormRefreshEndTipView.m */; };
+		8F7CE5581EF245B6001F5B4C /* HFFormRefreshLoadingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7CE5571EF245B6001F5B4C /* HFFormRefreshLoadingCell.m */; };
+		8F7CE55A1EF24EA6001F5B4C /* iconfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F7CE5591EF24CA6001F5B4C /* iconfont.ttf */; };
 		8F7F5C491E95C032003FB2EE /* NSBundle+HFForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C131E95C032003FB2EE /* NSBundle+HFForm.m */; };
 		8F7F5C4A1E95C032003FB2EE /* HFFormAddSectionButtonTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C161E95C032003FB2EE /* HFFormAddSectionButtonTVC.m */; };
 		8F7F5C4B1E95C032003FB2EE /* HFFormAlbumTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F7F5C181E95C032003FB2EE /* HFFormAlbumTVC.m */; };
@@ -65,6 +72,20 @@
 		8F6378401ED43B8D005B73A6 /* HFFormTagsTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormTagsTVC.m; sourceTree = "<group>"; };
 		8F6378431ED43E91005B73A6 /* HFFormOptionsInterModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormOptionsInterModel.h; sourceTree = "<group>"; };
 		8F6378441ED43E91005B73A6 /* HFFormOptionsInterModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormOptionsInterModel.m; sourceTree = "<group>"; };
+		8F7CE5461EF241B5001F5B4C /* HFFormRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormRefresh.h; sourceTree = "<group>"; };
+		8F7CE5471EF241B5001F5B4C /* HFFormRefreshBaseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormRefreshBaseView.h; sourceTree = "<group>"; };
+		8F7CE5481EF241B5001F5B4C /* HFFormRefreshBaseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormRefreshBaseView.m; sourceTree = "<group>"; };
+		8F7CE5491EF241B5001F5B4C /* HFFormRefreshFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormRefreshFooterView.h; sourceTree = "<group>"; };
+		8F7CE54A1EF241B5001F5B4C /* HFFormRefreshFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormRefreshFooterView.m; sourceTree = "<group>"; };
+		8F7CE54B1EF241B5001F5B4C /* HFFormRefreshHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormRefreshHeaderView.h; sourceTree = "<group>"; };
+		8F7CE54C1EF241B5001F5B4C /* HFFormRefreshHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormRefreshHeaderView.m; sourceTree = "<group>"; };
+		8F7CE54D1EF241B5001F5B4C /* UIScrollView+HFFormRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+HFFormRefresh.h"; sourceTree = "<group>"; };
+		8F7CE54E1EF241B5001F5B4C /* UIScrollView+HFFormRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+HFFormRefresh.m"; sourceTree = "<group>"; };
+		8F7CE5531EF24469001F5B4C /* HFFormRefreshEndTipView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormRefreshEndTipView.h; sourceTree = "<group>"; };
+		8F7CE5541EF24469001F5B4C /* HFFormRefreshEndTipView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormRefreshEndTipView.m; sourceTree = "<group>"; };
+		8F7CE5561EF245B6001F5B4C /* HFFormRefreshLoadingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormRefreshLoadingCell.h; sourceTree = "<group>"; };
+		8F7CE5571EF245B6001F5B4C /* HFFormRefreshLoadingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFFormRefreshLoadingCell.m; sourceTree = "<group>"; };
+		8F7CE5591EF24CA6001F5B4C /* iconfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = iconfont.ttf; sourceTree = "<group>"; };
 		8F7F5C121E95C032003FB2EE /* NSBundle+HFForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSBundle+HFForm.h"; sourceTree = "<group>"; };
 		8F7F5C131E95C032003FB2EE /* NSBundle+HFForm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSBundle+HFForm.m"; sourceTree = "<group>"; };
 		8F7F5C151E95C032003FB2EE /* HFFormAddSectionButtonTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFFormAddSectionButtonTVC.h; sourceTree = "<group>"; };
@@ -143,9 +164,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F7CE5451EF241B5001F5B4C /* FormRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				8F7CE5461EF241B5001F5B4C /* HFFormRefresh.h */,
+				8F7CE5471EF241B5001F5B4C /* HFFormRefreshBaseView.h */,
+				8F7CE5481EF241B5001F5B4C /* HFFormRefreshBaseView.m */,
+				8F7CE5491EF241B5001F5B4C /* HFFormRefreshFooterView.h */,
+				8F7CE54A1EF241B5001F5B4C /* HFFormRefreshFooterView.m */,
+				8F7CE54B1EF241B5001F5B4C /* HFFormRefreshHeaderView.h */,
+				8F7CE54C1EF241B5001F5B4C /* HFFormRefreshHeaderView.m */,
+				8F7CE54D1EF241B5001F5B4C /* UIScrollView+HFFormRefresh.h */,
+				8F7CE54E1EF241B5001F5B4C /* UIScrollView+HFFormRefresh.m */,
+			);
+			path = FormRefresh;
+			sourceTree = "<group>";
+		};
 		8F7F5C101E95C032003FB2EE /* HFForm */ = {
 			isa = PBXGroup;
 			children = (
+				8F7CE5451EF241B5001F5B4C /* FormRefresh */,
 				8F7F5C431E95C032003FB2EE /* Utility */,
 				8F7F5C111E95C032003FB2EE /* Category */,
 				8F7F5C141E95C032003FB2EE /* FormCell */,
@@ -205,6 +243,8 @@
 				8F63783E1ED43B8D005B73A6 /* HFFormCheckBoxTVC.m */,
 				8F63783F1ED43B8D005B73A6 /* HFFormTagsTVC.h */,
 				8F6378401ED43B8D005B73A6 /* HFFormTagsTVC.m */,
+				8F7CE5561EF245B6001F5B4C /* HFFormRefreshLoadingCell.h */,
+				8F7CE5571EF245B6001F5B4C /* HFFormRefreshLoadingCell.m */,
 			);
 			path = FormCell;
 			sourceTree = "<group>";
@@ -231,6 +271,8 @@
 		8F7F5C361E95C032003FB2EE /* FormView */ = {
 			isa = PBXGroup;
 			children = (
+				8F7CE5531EF24469001F5B4C /* HFFormRefreshEndTipView.h */,
+				8F7CE5541EF24469001F5B4C /* HFFormRefreshEndTipView.m */,
 				8F7F5C371E95C032003FB2EE /* HFFormDatePicker.h */,
 				8F7F5C381E95C032003FB2EE /* HFFormDatePicker.m */,
 				8F7F5C391E95C032003FB2EE /* HFFormOptionsView.h */,
@@ -295,6 +337,7 @@
 		8FBC60901E7944F500B06CD7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F7CE5591EF24CA6001F5B4C /* iconfont.ttf */,
 				8FBC60911E7944F500B06CD7 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -359,6 +402,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F7CE55A1EF24EA6001F5B4C /* iconfont.ttf in Resources */,
 				8F7F5C601E95C032003FB2EE /* FormIcon.bundle in Resources */,
 				8FBC60A01E7944F500B06CD7 /* LaunchScreen.storyboard in Resources */,
 				8FBC609D1E7944F500B06CD7 /* Assets.xcassets in Resources */,
@@ -382,28 +426,34 @@
 				8F7F5C491E95C032003FB2EE /* NSBundle+HFForm.m in Sources */,
 				8F7F5C551E95C032003FB2EE /* HFFormTitleTVC.m in Sources */,
 				8F6378451ED43E91005B73A6 /* HFFormOptionsInterModel.m in Sources */,
+				8F7CE54F1EF241B5001F5B4C /* HFFormRefreshBaseView.m in Sources */,
 				8FBC60951E7944F500B06CD7 /* AppDelegate.m in Sources */,
 				8F7F5C5B1E95C032003FB2EE /* HFFormOptionsView.m in Sources */,
 				8F7F5C4E1E95C032003FB2EE /* HFFormDefaultTVC.m in Sources */,
 				8F4E62511E95C50B005C461C /* HFFormHelper.m in Sources */,
 				8F7F5C4B1E95C032003FB2EE /* HFFormAlbumTVC.m in Sources */,
+				8F7CE5501EF241B5001F5B4C /* HFFormRefreshFooterView.m in Sources */,
 				8F4E62541E95C798005C461C /* UIResponder+HFForm.m in Sources */,
 				8F7F5C5D1E95C032003FB2EE /* HFFormTitleView.m in Sources */,
 				8F7F5C4C1E95C032003FB2EE /* HFFormBasicTableViewCell.m in Sources */,
 				8F7F5C4A1E95C032003FB2EE /* HFFormAddSectionButtonTVC.m in Sources */,
 				8F1206341E96106F009F5E30 /* HFFormImageBrowserVC.m in Sources */,
 				8F7F5C511E95C032003FB2EE /* HFFormSubmitButtonTVC.m in Sources */,
+				8F7CE5551EF24469001F5B4C /* HFFormRefreshEndTipView.m in Sources */,
+				8F7CE5521EF241B5001F5B4C /* UIScrollView+HFFormRefresh.m in Sources */,
 				8F7F5C4F1E95C032003FB2EE /* HFFormJumpTVC.m in Sources */,
 				8F7F5C5C1E95C032003FB2EE /* HFFormPickerView.m in Sources */,
 				8F1206371E971F0F009F5E30 /* HFFormBasicModel.m in Sources */,
 				8F7F5C651E95C096003FB2EE /* UIView+Frame.m in Sources */,
 				8F7F5C501E95C032003FB2EE /* HFFormOptionsTVC.m in Sources */,
 				8F7F5C621E95C032003FB2EE /* HFormOptimizeInfo.m in Sources */,
+				8F7CE5581EF245B6001F5B4C /* HFFormRefreshLoadingCell.m in Sources */,
 				8F7F5C5E1E95C032003FB2EE /* HFForm.m in Sources */,
 				8F7F5C4D1E95C032003FB2EE /* HFFormCustomTVC.m in Sources */,
 				8FBC60921E7944F500B06CD7 /* main.m in Sources */,
 				8F6378411ED43B8D005B73A6 /* HFFormCheckBoxTVC.m in Sources */,
 				8F7F5C541E95C032003FB2EE /* HFFormTextViewTVC.m in Sources */,
+				8F7CE5511EF241B5001F5B4C /* HFFormRefreshHeaderView.m in Sources */,
 				8FE9F7581E95CAAD001AFA60 /* NSString+HFForm.m in Sources */,
 				8F7F5C561E95C032003FB2EE /* HFFromDatePickerTVC.m in Sources */,
 				8F7F5C611E95C032003FB2EE /* HFFormCheck.m in Sources */,
@@ -459,7 +509,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -507,7 +557,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

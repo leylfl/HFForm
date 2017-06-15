@@ -16,4 +16,14 @@
 
 @property (nonatomic, strong, readonly) UITableView *tableView;
 
+@property (nonatomic, assign) HFFormRefreshMode refreshMode;
+
+- (void)formRefreshData;
+
+- (void)formLoadMoreData;
+
+- (BOOL)needLoadMoreData;
+
+- (void)endLoadData;
+
 @end

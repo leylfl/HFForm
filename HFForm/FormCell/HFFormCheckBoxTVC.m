@@ -35,7 +35,7 @@
         
         _arrowLabel = [[UILabel alloc] init];
         _arrowLabel.font = [UIFont fontWithName:@"iconfont" size:20];
-        _arrowLabel.text = @"选";
+        _arrowLabel.text = @"\U0000e8c5";
         _arrowLabel.textColor = RGB(63, 68, 98);
         _arrowLabel.hidden = YES;
         [self.contentView addSubview:_arrowLabel];
@@ -125,6 +125,10 @@
                 break;
             }
         }
+    }else if (row.defaultSelectRow) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:row.defaultSelectRow.integerValue - 1 inSection:0];
+        [_collectionView selectItemAtIndexPath:indexPath animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+        row.value = [row.multiDatas[indexPath.item] optionID];
     }
 }
 
