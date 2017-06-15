@@ -127,7 +127,7 @@ self.refreshMode = HFFormRefreshModeRefresh | HFFormRefreshModeLoadMore;  // �
 ```
 
 #### 示例图片如下:(动图加载可能较慢)
-![](https://github.com/leylfl/HFForm/blob/master/HFFormTest/Photos/dynamic.gif)
+![](https://github.com/leylfl/HFForm/blob/master/HFFormTest/Photos/refresh.gif)
 
 ## 更多
 #### 还实现了比如一键模型转字典，一键回调表单数据等方法
